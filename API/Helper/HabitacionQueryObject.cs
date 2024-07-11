@@ -2,18 +2,10 @@
 {
     public class HabitacionQueryObject
     {
-        public int Piso { get; set; }
+        public string? Piso { get; set; } = null!;
 
-        public string Tipo { get; set; } = null!;
+        public string? Tipo { get; set; } = null!;
 
-        public int IdEstado { get; set; }
-
-        public string? OrdenadoPor { get; set; } = null;
-
-        public bool Descendiente { get; set; } = false;
-
-        public int NumeroPagina { get; set; } = 1;
-
-        public int TamanoPagina { get; set; } = 20;
+        public string? IdEstado { get; set; } = null!;
     }
 }

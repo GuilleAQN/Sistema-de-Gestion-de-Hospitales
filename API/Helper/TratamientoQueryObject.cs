@@ -2,18 +2,10 @@
 {
     public class TratamientoQueryObject
     {
-        public int IdDoctor { get; set; }
+        public string? IdDoctor { get; set; } = null!;
 
-        public DateOnly FechaInicio { get; set; }
+        public DateOnly FechaInicio { get; set; } = DateOnly.MinValue;
 
-        public DateOnly FechaFin { get; set; }
-
-        public string? OrdenadoPor { get; set; } = null;
-
-        public bool Descendiente { get; set; } = false;
-
-        public int NumeroPagina { get; set; } = 1;
-
-        public int TamanoPagina { get; set; } = 20;
+        public DateOnly FechaFin { get; set; } = DateOnly.MinValue;
     }
 }

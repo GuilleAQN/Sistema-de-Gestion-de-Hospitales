@@ -18,6 +18,10 @@
 
         public int IdEspecialidad { get; set; }
 
+        public string? NombreEspecialidad { get; set; }
+
         public int IdDepartamento { get; set; }
+
+        public string? NombreDepartamento { get; set; }
     }
 }

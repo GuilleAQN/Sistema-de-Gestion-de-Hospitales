@@ -11,5 +11,7 @@
         public string Tipo { get; set; } = null!;
 
         public int IdEstado { get; set; }
+
+        public string? NombreEstado { get; set; }
     }
 }

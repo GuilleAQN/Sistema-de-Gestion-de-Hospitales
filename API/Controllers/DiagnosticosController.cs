@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Shared.Diagnostico;
 using API.Models;
 using API.Data;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using API.Helper;
 
 namespace API.Controller
 {
@@ -22,9 +24,26 @@ namespace API.Controller
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<DiagnosticoGetDTO>>> GetDiagnosticos()
+        public async Task<ActionResult<IEnumerable<DiagnosticoGetDTO>>> GetDiagnosticos([FromQuery] DiagnosticoQueryObject query)
         {
-            var diagnosticoList = await context.Diagnosticos.ToListAsync();
+            var diagnosticos = context.Diagnosticos
+                .Include(c => c.IdPacienteNavigation)
+                .Include(c => c.IdDoctorNavigation)
+                .AsQueryable();
+
+            if (query != null)
+            {
+                diagnosticos = query switch
+                {
+                    _ when !string.IsNullOrWhiteSpace(query.IdPaciente) => diagnosticos.Where(s => s.IdPaciente.Equals(query.IdPaciente)),
+                    _ when !string.IsNullOrWhiteSpace(query.IdDoctor) => diagnosticos.Where(s => s.IdDoctor.Equals(query.IdDoctor)),
+                    _ when !(query.Fecha != DateOnly.MinValue) =>
+                    diagnosticos.Where(s => s.Fecha >= query.Fecha && s.Fecha <= query.Fecha),
+                    _ => diagnosticos
+                };
+            }
+
+            var diagnosticoList = await diagnosticos.ToListAsync();
             var diagnosticosDto = mapper.Map<IEnumerable<DiagnosticoGetDTO>>(diagnosticoList);
             return Ok(diagnosticosDto);
         }

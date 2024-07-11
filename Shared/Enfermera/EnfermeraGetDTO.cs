@@ -17,5 +17,7 @@
         public string? CorreoElectronico { get; set; }
 
         public int IdDepartamento { get; set; }
+
+        public string? NombreDepartamento { get; set; }
     }
 }

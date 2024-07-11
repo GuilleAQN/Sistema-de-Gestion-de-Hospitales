@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Shared.Paciente;
 using API.Models;
 using API.Data;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using API.Helper;
 
 namespace API.Controller
 {
@@ -21,9 +23,27 @@ namespace API.Controller
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PacienteGetDTO>>> GetPacientes()
+        public async Task<ActionResult<IEnumerable<PacienteGetDTO>>> GetPacientes([FromQuery] PacienteQueryObject query)
         {
-            var pacienteList = await context.Pacientes.ToListAsync();
+            var pacientes = context.Pacientes.AsQueryable();
+
+            if (query != null)
+            {
+                pacientes = query switch
+                {
+                    _ when !string.IsNullOrWhiteSpace(query.NombreCompleto) =>
+                    pacientes.Where(s => s.NombreCompleto.Contains(query.NombreCompleto)),
+                    _ when !(query.FechaNacimiento != DateOnly.MinValue) =>
+                    pacientes.Where(s => s.FechaNacimiento >= query.FechaNacimiento.AddDays(-5) && s.FechaNacimiento <= query.FechaNacimiento.AddDays(5)),
+                    _ when !string.IsNullOrWhiteSpace(query.Genero) =>
+                    pacientes.Where(s => s.Genero.Contains(query.Genero)),
+                    _ when !string.IsNullOrWhiteSpace(query.CorreoElectronico) =>
+                    pacientes.Where(s => s.CorreoElectronico.Contains(query.CorreoElectronico)),
+                    _ => pacientes
+                };
+            }
+
+            var pacienteList = await pacientes.ToListAsync();
             var pacientesDto = mapper.Map<IEnumerable<PacienteGetDTO>>(pacienteList);
             return Ok(pacientesDto);
         }

@@ -3,18 +3,10 @@
     public class EnfermeraQueryObject
     {
 
-        public string NombreCompleto { get; set; } = null!;
+        public string? NombreCompleto { get; set; } = null!;
 
-        public DateOnly FechaContratacion { get; set; }
+        public DateOnly FechaContratacion { get; set; } = DateOnly.MinValue;
 
-        public string? CorreoElectronico { get; set; }
-
-        public int IdDepartamento { get; set; }
-
-        public string? OrdenadoPor { get; set; } = null;
-
-        public bool Descendiente { get; set; } = false;
-
-        public int NumeroPagina { get; set; } = 1;
+        public string? CorreoElectronico { get; set; } = null!;
     }
 }

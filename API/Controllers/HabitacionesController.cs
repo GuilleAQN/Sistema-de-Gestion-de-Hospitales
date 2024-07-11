@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Shared.Habitacion;
 using API.Models;
 using API.Data;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using API.Helper;
 
 namespace API.Controller
 {
@@ -22,9 +24,27 @@ namespace API.Controller
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<HabitacionGetDTO>>> GetHabitaciones()
+        public async Task<ActionResult<IEnumerable<HabitacionGetDTO>>> GetHabitaciones([FromQuery] HabitacionQueryObject query)
         {
-            var habitacionList = await context.Habitaciones.ToListAsync();
+            var habitaciones = context.Habitaciones
+                .Include(c => c.IdEstadoNavigation)
+                .AsQueryable();
+
+            if (query != null)
+            {
+                habitaciones = query switch
+                {
+                    _ when !string.IsNullOrWhiteSpace(query.Piso) =>
+                    habitaciones.Where(s => s.Piso.Equals(query.Piso)),
+                    _ when !string.IsNullOrWhiteSpace(query.Tipo) =>
+                    habitaciones.Where(s => s.Tipo.Contains(query.Tipo)),
+                    _ when !string.IsNullOrWhiteSpace(query.IdEstado) =>
+                    habitaciones.Where(s => s.IdEstado.Equals(query.IdEstado)),
+                    _ => habitaciones
+                };
+            }
+
+            var habitacionList = await habitaciones.ToListAsync();
             var habitacionesDto = mapper.Map<IEnumerable<HabitacionGetDTO>>(habitacionList);
             return Ok(habitacionesDto);
         }

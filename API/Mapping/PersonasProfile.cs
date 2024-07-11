@@ -10,11 +10,16 @@ namespace API.Mapping
     {
         public PersonasProfile()
         {
-            CreateMap<DoctorGetDTO, Doctor>().ReverseMap();
+            CreateMap<DoctorGetDTO, Doctor>()
+                .ForPath(dest => dest.IdDepartamentoNavigation.Nombre, opt => opt.MapFrom(src => src.NombreDepartamento))
+                .ForPath(dest => dest.IdEspecialidad, opt => opt.MapFrom(src => src.NombreEspecialidad))
+                .ReverseMap();
             CreateMap<DoctorInsertDTO, Doctor>().ReverseMap();
             CreateMap<DoctorUpdateDTO, Doctor>().ReverseMap();
 
-            CreateMap<EnfermeraGetDTO, Enfermera>().ReverseMap();
+            CreateMap<EnfermeraGetDTO, Enfermera>()
+                .ForPath(dest => dest.IdDepartamentoNavigation.Nombre, opt => opt.MapFrom(src => src.NombreDepartamento))
+                .ReverseMap();
             CreateMap<EnfermeraInsertDTO, Enfermera>().ReverseMap();
             CreateMap<EnfermeraUpdateDTO, Enfermera>().ReverseMap();
 

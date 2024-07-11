@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Shared.Doctor;
 using API.Models;
 using API.Data;
+using API.Helper;
 
 namespace API.Controller
 {
@@ -21,9 +22,32 @@ namespace API.Controller
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<DoctorGetDTO>>> GetDoctores()
+        public async Task<ActionResult<IEnumerable<DoctorGetDTO>>> GetDoctores([FromQuery] DoctorQueryObject query)
         {
-            var doctorList = await context.Doctores.ToListAsync();
+            var doctores = context.Doctores
+               .Include(c => c.IdDepartamentoNavigation)
+               .Include(c => c.IdEspecialidadNavigation)
+               .AsQueryable();
+
+            if (query != null)
+            {
+                doctores = query switch
+                {
+                    _ when !string.IsNullOrWhiteSpace(query.NombreCompleto) =>
+                    doctores.Where(s => s.NombreCompleto.Contains(query.NombreCompleto)),
+                    _ when !string.IsNullOrWhiteSpace(query.CorreoElectronico) =>
+                    doctores.Where(s => s.CorreoElectronico.Contains(query.CorreoElectronico)),
+                    _ when !string.IsNullOrWhiteSpace(query.IdEspecialidad) =>
+                    doctores.Where(s => s.IdEspecialidad.Equals(query.IdEspecialidad)),
+                    _ when !string.IsNullOrWhiteSpace(query.IdEspecialidad) =>
+                    doctores.Where(s => s.IdDepartamento.Equals(query.IdDepartamento)),
+                    _ when !(query.FechaContratacion != DateOnly.MinValue) =>
+                    doctores.Where(s => s.FechaContratacion >= query.FechaContratacion && s.FechaContratacion <= query.FechaContratacion),
+                    _ => doctores
+                };
+            }
+
+            var doctorList = await doctores.ToListAsync();
             var doctoresDto = mapper.Map<IEnumerable<DoctorGetDTO>>(doctorList);
             return Ok(doctoresDto);
         }

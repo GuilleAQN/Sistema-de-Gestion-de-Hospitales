@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Shared.Tratamiento;
 using API.Models;
 using API.Data;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using API.Helper;
 
 namespace API.Controller
 {
@@ -21,9 +23,25 @@ namespace API.Controller
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TratamientoGetDTO>>> GetTratamientos()
+        public async Task<ActionResult<IEnumerable<TratamientoGetDTO>>> GetTratamientos([FromQuery] TratamientoQueryObject query)
         {
-            var tratamientoList = await context.Tratamientos.ToListAsync();
+            var tratamientos = context.Tratamientos.AsQueryable();
+
+            if (query != null)
+            {
+                tratamientos = query switch
+                {
+                    _ when !string.IsNullOrWhiteSpace(query.IdDoctor) =>
+                    tratamientos.Where(s => s.IdDoctor.Equals(query.IdDoctor)),
+                    _ when !(query.FechaInicio != DateOnly.MinValue) =>
+                    tratamientos.Where(s => s.FechaInicio >= query.FechaInicio.AddDays(-5) && s.FechaInicio <= query.FechaInicio.AddDays(5)),
+                    _ when !(query.FechaFin != DateOnly.MinValue) =>
+                    tratamientos.Where(s => s.FechaFin >= query.FechaFin && s.FechaFin <= query.FechaFin),
+                    _ => tratamientos
+                };
+            }
+
+            var tratamientoList = await tratamientos.ToListAsync();
             var tratamientosDto = mapper.Map<IEnumerable<TratamientoGetDTO>>(tratamientoList);
             return Ok(tratamientosDto);
         }

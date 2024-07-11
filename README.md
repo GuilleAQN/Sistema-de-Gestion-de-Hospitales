@@ -50,3 +50,4 @@ dotnet watch run"
 [![C#](https://img.shields.io/badge/C%23-12-blue)](https://dotnet.microsoft.com/en-us/languages/csharp)
 [![.NET](https://img.shields.io/badge/.NET-8.0-blueviolet)](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
 [![SQL Server](https://img.shields.io/badge/SQL_Server-2019-orange)](https://www.microsoft.com/en-us/sql-server/sql-server-downloads)
+[![Blazor](https://img.shields.io/badge/blazor-%235C2D91.svg?style=for-the-badge&logo=blazor&logoColor=white)](https://mudblazor.com/)

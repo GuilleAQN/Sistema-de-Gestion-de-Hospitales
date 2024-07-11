@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Shared.Departamento;
 using API.Models;
 using API.Data;
+using API.Helper;
 
 namespace API.Controller
 {
@@ -21,9 +22,21 @@ namespace API.Controller
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<DepartamentoGetDTO>>> GetDepartamentos()
+        public async Task<ActionResult<IEnumerable<DepartamentoGetDTO>>> GetDepartamentos([FromQuery] DepartamentoQueryObject query)
         {
-            var departamentoList = await context.Departamentos.ToListAsync();
+            var departamentos = context.Departamentos.AsQueryable();
+
+            if (query != null)
+            {
+                departamentos = query switch
+                {
+                    _ when !string.IsNullOrWhiteSpace(query.Nombre) => departamentos.Where(s => s.Nombre.Contains(query.Telefono)),
+                    _ when !string.IsNullOrWhiteSpace(query.Telefono) => departamentos.Where(s => s.Telefono.Contains(query.Telefono)),
+                    _ => departamentos
+                };
+            }
+
+            var departamentoList = await departamentos.ToListAsync();
             var departamentosDto = mapper.Map<IEnumerable<DepartamentoGetDTO>>(departamentoList);
             return Ok(departamentosDto);
         }

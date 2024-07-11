@@ -6,7 +6,11 @@
 
         public int IdPaciente { get; set; }
 
+        public string NombrePaciente { get; set; } = null!;
+
         public int IdDoctor { get; set; }
+
+        public string NombreDoctor { get; set; } = null!;
 
         public DateOnly Fecha { get; set; }
 

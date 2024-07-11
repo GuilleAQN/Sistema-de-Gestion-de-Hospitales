@@ -4,6 +4,8 @@ using Microsoft.EntityFrameworkCore;
 using Shared.Enfermera;
 using API.Models;
 using API.Data;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using API.Helper;
 
 namespace API.Controller
 {
@@ -21,9 +23,25 @@ namespace API.Controller
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<EnfermeraGetDTO>>> GetEnfermeras()
+        public async Task<ActionResult<IEnumerable<EnfermeraGetDTO>>> GetEnfermeras([FromQuery] EnfermeraQueryObject query)
         {
-            var enfermeraList = await context.Enfermeras.ToListAsync();
+            var enfermeras = context.Enfermeras.AsQueryable();
+
+            if (query != null)
+            {
+                enfermeras = query switch
+                {
+                    _ when !string.IsNullOrWhiteSpace(query.NombreCompleto) =>
+                    enfermeras.Where(s => s.NombreCompleto.Contains(query.NombreCompleto)),
+                    _ when !string.IsNullOrWhiteSpace(query.CorreoElectronico) =>
+                    enfermeras.Where(s => s.CorreoElectronico.Contains(query.CorreoElectronico)),
+                    _ when !(query.FechaContratacion != DateOnly.MinValue) =>
+                    enfermeras.Where(s => s.FechaContratacion >= query.FechaContratacion && s.FechaContratacion <= query.FechaContratacion),
+                    _ => enfermeras
+                };
+            }
+
+            var enfermeraList = await enfermeras.ToListAsync();
             var enfermerasDto = mapper.Map<IEnumerable<EnfermeraGetDTO>>(enfermeraList);
             return Ok(enfermerasDto);
         }

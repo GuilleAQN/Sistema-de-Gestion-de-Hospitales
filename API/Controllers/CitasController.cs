@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Shared.Cita;
 using API.Models;
+using API.Helper;
 using API.Data;
 
 namespace API.Controller
@@ -21,9 +22,31 @@ namespace API.Controller
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CitaGetDTO>>> GetCitas()
+        public async Task<ActionResult<IEnumerable<CitaGetDTO>>> GetCitas([FromQuery] CitasQueryObject query)
         {
-            var citasDto = mapper.Map<IEnumerable<CitaGetDTO>>(await context.Citas.ToListAsync());
+            var citas = context.Citas
+                .Include(c => c.IdPacienteNavigation)
+                .Include(c => c.IdDoctorNavigation)
+                .Include(c => c.IdEnfermeraNavigation)
+                .Include(c => c.IdCategoriaCitaNavigation)
+                .AsQueryable();
+
+            if (query != null)
+            {
+                citas = query switch
+                {
+                    _ when !string.IsNullOrWhiteSpace(query.IdPaciente) => citas.Where(s => s.IdPaciente.Equals(query.IdPaciente)),
+                    _ when !string.IsNullOrWhiteSpace(query.IdDoctor) => citas.Where(s => s.IdDoctor.Equals(query.IdDoctor)),
+                    _ when !string.IsNullOrWhiteSpace(query.IdEnfermera) => citas.Where(s => s.IdEnfermera.Equals(query.IdEnfermera)),
+                    _ when !string.IsNullOrWhiteSpace(query.IdCategoriaCita) => citas.Where(s => s.IdCategoriaCita.Equals(query.IdCategoriaCita)),
+                    _ when !(query.Fecha != DateTime.MinValue) => 
+                    citas.Where(s => s.Fecha <= query.Fecha),
+                    _ => citas
+                };
+            }
+
+            var citasList = await citas.ToListAsync();
+            var citasDto = mapper.Map<IEnumerable<CitaGetDTO>>(citasList);
             return Ok(citasDto);
         }
 

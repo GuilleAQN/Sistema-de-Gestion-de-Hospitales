@@ -9,16 +9,8 @@
 
         public string? CorreoElectronico { get; set; }
 
-        public int IdEspecialidad { get; set; }
+        public string? IdEspecialidad { get; set; }
 
-        public int IdDepartamento { get; set; }
-
-        public string? OrdenadoPor { get; set; } = null;
-
-        public bool Descendiente { get; set; } = false;
-
-        public int NumeroPagina { get; set; } = 1;
-
-        public int TamanoPagina { get; set; } = 20;
+        public string? IdDepartamento { get; set; }
     }
 }

@@ -19,7 +19,12 @@ namespace API.Mapping
             CreateMap<CategoriaCitaInsertDTO, CategoriasCita>().ReverseMap();
             CreateMap<CategoriaCitaUpdateDTO, CategoriasCita>().ReverseMap();
 
-            CreateMap<CitaGetDTO, Cita>().ReverseMap();
+            CreateMap<CitaGetDTO, Cita>()
+                .ForPath(dest => dest.IdPacienteNavigation.NombreCompleto, opt => opt.MapFrom(src => src.NombrePaciente))
+                .ForPath(dest => dest.IdDoctorNavigation.NombreCompleto, opt => opt.MapFrom(src => src.NombreDoctor))
+                .ForPath(dest => dest.IdEnfermeraNavigation.NombreCompleto, opt => opt.MapFrom(src => src.NombreEnfermera))
+                .ForPath(dest => dest.IdCategoriaCitaNavigation.Nombre, opt => opt.MapFrom(src => src.CategoriaCitaNombre))
+                .ReverseMap();
             CreateMap<CitaInsertDTO, Cita>().ReverseMap();
             CreateMap<CitaUpdateDTO, Cita>().ReverseMap();
 
@@ -27,7 +32,10 @@ namespace API.Mapping
             CreateMap<DepartamentoInsertDTO, Departamento>().ReverseMap();
             CreateMap<DepartamentoUpdateDTO, Departamento>().ReverseMap();
 
-            CreateMap<DiagnosticoGetDTO, Diagnostico>().ReverseMap();
+            CreateMap<DiagnosticoGetDTO, Diagnostico>()
+                .ForPath(dest => dest.IdPacienteNavigation.NombreCompleto, opt => opt.MapFrom(src => src.NombrePaciente))
+                .ForPath(dest => dest.IdDoctorNavigation.NombreCompleto, opt => opt.MapFrom(src => src.NombreDoctor))
+                .ReverseMap();
             CreateMap<DiagnosticoInsertDTO, Diagnostico>().ReverseMap();
             CreateMap<DiagnosticoUpdateDTO, Diagnostico>().ReverseMap();
 
@@ -39,11 +47,16 @@ namespace API.Mapping
             CreateMap<EstadoInsertDTO, Estado>().ReverseMap();
             CreateMap<EstadoUpdateDTO, Estado>().ReverseMap();
 
-            CreateMap<HabitacionGetDTO, Habitacion>().ReverseMap();
+            CreateMap<HabitacionGetDTO, Habitacion>()
+                .ForPath(dest => dest.IdEstadoNavigation.Nombre, opt => opt.MapFrom(src => src.NombreEstado))
+                .ReverseMap();
             CreateMap<HabitacionInsertDTO, Habitacion>().ReverseMap();
             CreateMap<HabitacionUpdateDTO, Habitacion>().ReverseMap();
 
-            CreateMap<TratamientoGetDTO, Tratamiento>().ReverseMap();
+            CreateMap<TratamientoGetDTO, Tratamiento>()
+                .ForPath(dest => dest.IdDoctorNavigation.NombreCompleto, opt => opt.MapFrom(src => src.NombreDoctor))
+                .ForPath(dest => dest.IdDiagnosticoNavigation.Descripcion, opt => opt.MapFrom(src => src.DescripcionDiagnostico))
+                .ReverseMap();
             CreateMap<TratamientoInsertDTO, Tratamiento>().ReverseMap();
             CreateMap<TratamientoUpdateDTO, Tratamiento>().ReverseMap();
         }
