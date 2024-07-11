@@ -47,7 +47,7 @@ dotnet watch run"
 - **.NET**: Una plataforma de desarrollo gratuita y de código abierto para la creación de diferentes tipos de aplicaciones.
 - **SQL Server**: Un sistema de gestión de bases de datos relacional desarrollado por Microsoft.
 
-[![C#](https://img.shields.io/badge/C%23-12-blue)](https://dotnet.microsoft.com/en-us/languages/csharp)
-[![.NET](https://img.shields.io/badge/.NET-8.0-blueviolet)](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
-[![SQL Server](https://img.shields.io/badge/SQL_Server-2019-orange)](https://www.microsoft.com/en-us/sql-server/sql-server-downloads)
+[![C#](https://img.shields.io/badge/c%23-%23239120.svg?style=for-the-badge&logo=csharp&logoColor=white)](https://dotnet.microsoft.com/en-us/languages/csharp)
+[![.Net](https://img.shields.io/badge/.NET-5C2D91?style=for-the-badge&logo=.net&logoColor=white)](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+[![MicrosoftSQLServer](https://img.shields.io/badge/Microsoft%20SQL%20Server-CC2927?style=for-the-badge&logo=microsoft%20sql%20server&logoColor=white)](https://www.microsoft.com/en-us/sql-server/sql-server-downloads)
 [![Blazor](https://img.shields.io/badge/blazor-%235C2D91.svg?style=for-the-badge&logo=blazor&logoColor=white)](https://mudblazor.com/)
