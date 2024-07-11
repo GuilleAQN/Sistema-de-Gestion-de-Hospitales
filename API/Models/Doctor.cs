@@ -29,7 +29,7 @@ public partial class Doctor
 
     public virtual Departamento IdDepartamentoNavigation { get; set; } = null!;
 
-    public virtual Especialidad IdEspecialidadoNavigation { get; set; } = null!;
+    public virtual Especialidad IdEspecialidadNavigation { get; set; } = null!;
 
     public virtual ICollection<Tratamiento> Tratamientos { get; set; } = new List<Tratamiento>();
 }

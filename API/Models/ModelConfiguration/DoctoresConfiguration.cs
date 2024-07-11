@@ -19,6 +19,11 @@ namespace API.Models.ModelConfiguration
                 .HasForeignKey(d => d.IdDepartamento)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__Doctores__IdDepa__31EC6D26");
+
+            entity.HasOne(d => d.IdEspecialidadNavigation).WithMany(p => p.Doctor)
+                .HasForeignKey(d => d.IdDoctor)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Doctores__IdEspecialidad__3C34244G9365KKNSVB");
         }
     }
 }
