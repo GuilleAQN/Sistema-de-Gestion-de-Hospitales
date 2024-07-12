@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using API.Controller;
-using Shared.Estado;
-using API.Data;
+using Sistema_de_Gestion_de_Hospitales.API.Controller;
+using Sistema_de_Gestion_de_Hospitales.Shared.Estado;
+using Sistema_de_Gestion_de_Hospitales.API.Data;
 
-namespace API.UnitTest
+namespace Sistema_de_Gestion_de_Hospitales.API.UnitTest
 {
     public class EstadosControllerTest
     {

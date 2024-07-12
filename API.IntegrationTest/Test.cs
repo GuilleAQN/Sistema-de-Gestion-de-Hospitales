@@ -1,8 +1,9 @@
 using System.Net;
 using System.Text;
 using System.Text.Json;
+using NUnit;
 
-namespace API.IntegrationTest
+namespace Sistema_de_Gestion_de_Hospitales.API.IntegrationTest
 {
     public class Tests
     {
@@ -12,7 +13,7 @@ namespace API.IntegrationTest
         public void ConfigurarClienteHttp()
         {
             _client = new HttpClient();
-            _client.BaseAddress = new Uri("http://localhost:5432"); // Obtener la URL base de una variable de entorno
+            _client.BaseAddress = new Uri("http://localhost:5432"); // Obtener la URL basdote de una variable de entorno
         }
 
         [Test]
@@ -29,7 +30,7 @@ namespace API.IntegrationTest
 
             var response = await _client.PostAsync("/api/CategoriasCitas", content);
 
-            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+            Assert.That(response.StatusCode, Is.EqualTo(HttpStatusCode.OK));
         }
 
         [TearDown]

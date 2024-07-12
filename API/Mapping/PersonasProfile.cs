@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
-using API.Models;
-using Shared.Doctor;
-using Shared.Enfermera;
-using Shared.Paciente;
+using Sistema_de_Gestion_de_Hospitales.API.Models;
+using Sistema_de_Gestion_de_Hospitales.Shared.Doctor;
+using Sistema_de_Gestion_de_Hospitales.Shared.Enfermera;
+using Sistema_de_Gestion_de_Hospitales.Shared.Paciente;
 
-namespace API.Mapping
+namespace Sistema_de_Gestion_de_Hospitales.API.Mapping
 {
     public class PersonasProfile : Profile
     {

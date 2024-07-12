@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace API.Migrations
+namespace Sistema_de_Gestion_de_Hospitales.API.Migrations
 {
     /// <inheritdoc />
     public partial class FixRelationships : Migration

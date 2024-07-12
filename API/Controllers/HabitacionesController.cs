@@ -1,13 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Shared.Habitacion;
-using API.Models;
-using API.Data;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-using API.Helper;
+using Sistema_de_Gestion_de_Hospitales.Shared.Habitacion;
+using Sistema_de_Gestion_de_Hospitales.API.Models;
+using Sistema_de_Gestion_de_Hospitales.API.Data;
 
-namespace API.Controller
+namespace Sistema_de_Gestion_de_Hospitales.API.Controller
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -24,27 +22,11 @@ namespace API.Controller
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<HabitacionGetDTO>>> GetHabitaciones([FromQuery] HabitacionQueryObject query)
+        public async Task<ActionResult<IEnumerable<HabitacionGetDTO>>> GetHabitaciones()
         {
-            var habitaciones = context.Habitaciones
+            var habitacionList = await context.Habitaciones
                 .Include(c => c.IdEstadoNavigation)
-                .AsQueryable();
-
-            if (query != null)
-            {
-                habitaciones = query switch
-                {
-                    _ when !string.IsNullOrWhiteSpace(query.Piso) =>
-                    habitaciones.Where(s => s.Piso.Equals(query.Piso)),
-                    _ when !string.IsNullOrWhiteSpace(query.Tipo) =>
-                    habitaciones.Where(s => s.Tipo.Contains(query.Tipo)),
-                    _ when !string.IsNullOrWhiteSpace(query.IdEstado) =>
-                    habitaciones.Where(s => s.IdEstado.Equals(query.IdEstado)),
-                    _ => habitaciones
-                };
-            }
-
-            var habitacionList = await habitaciones.ToListAsync();
+                .ToListAsync();
             var habitacionesDto = mapper.Map<IEnumerable<HabitacionGetDTO>>(habitacionList);
             return Ok(habitacionesDto);
         }

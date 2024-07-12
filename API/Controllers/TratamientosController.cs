@@ -1,13 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Shared.Tratamiento;
-using API.Models;
-using API.Data;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-using API.Helper;
+using Sistema_de_Gestion_de_Hospitales.Shared.Tratamiento;
+using Sistema_de_Gestion_de_Hospitales.API.Models;
+using Sistema_de_Gestion_de_Hospitales.API.Data;
 
-namespace API.Controller
+namespace Sistema_de_Gestion_de_Hospitales.API.Controller
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -23,25 +21,9 @@ namespace API.Controller
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<TratamientoGetDTO>>> GetTratamientos([FromQuery] TratamientoQueryObject query)
+        public async Task<ActionResult<IEnumerable<TratamientoGetDTO>>> GetTratamientos()
         {
-            var tratamientos = context.Tratamientos.AsQueryable();
-
-            if (query != null)
-            {
-                tratamientos = query switch
-                {
-                    _ when !string.IsNullOrWhiteSpace(query.IdDoctor) =>
-                    tratamientos.Where(s => s.IdDoctor.Equals(query.IdDoctor)),
-                    _ when !(query.FechaInicio != DateOnly.MinValue) =>
-                    tratamientos.Where(s => s.FechaInicio >= query.FechaInicio.AddDays(-5) && s.FechaInicio <= query.FechaInicio.AddDays(5)),
-                    _ when !(query.FechaFin != DateOnly.MinValue) =>
-                    tratamientos.Where(s => s.FechaFin >= query.FechaFin && s.FechaFin <= query.FechaFin),
-                    _ => tratamientos
-                };
-            }
-
-            var tratamientoList = await tratamientos.ToListAsync();
+            var tratamientoList = await context.Tratamientos.ToListAsync();
             var tratamientosDto = mapper.Map<IEnumerable<TratamientoGetDTO>>(tratamientoList);
             return Ok(tratamientosDto);
         }

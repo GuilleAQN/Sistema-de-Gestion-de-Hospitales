@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace API.Models.ModelConfiguration
+namespace Sistema_de_Gestion_de_Hospitales.API.Models.ModelConfiguration
 {
     public class CategoriaCitasConfiguration : IEntityTypeConfiguration<CategoriasCita>
     {

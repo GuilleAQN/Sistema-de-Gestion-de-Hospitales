@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Shared.Estado;
-using API.Models;
-using API.Data;
+using Sistema_de_Gestion_de_Hospitales.Shared.Estado;
+using Sistema_de_Gestion_de_Hospitales.API.Models;
+using Sistema_de_Gestion_de_Hospitales.API.Data;
 
-namespace API.Controller
+namespace Sistema_de_Gestion_de_Hospitales.API.Controller
 {
     [Route("api/[controller]")]
     [ApiController]

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace API.Models;
+namespace Sistema_de_Gestion_de_Hospitales.API.Models;
 
 public partial class Diagnostico
 {

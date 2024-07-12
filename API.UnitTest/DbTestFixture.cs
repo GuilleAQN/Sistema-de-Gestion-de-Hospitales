@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using API.Mapping;
+using Sistema_de_Gestion_de_Hospitales.API.Mapping;
 
-namespace API.UnitTest
+namespace Sistema_de_Gestion_de_Hospitales.API.UnitTest
 {
     public class DbTestFixture<TContext> : IDisposable where TContext : DbContext
     {

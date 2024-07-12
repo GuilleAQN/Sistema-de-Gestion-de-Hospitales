@@ -1,9 +1,9 @@
-﻿using API.Models;
-using API.Models.ModelConfiguration;
+﻿using Sistema_de_Gestion_de_Hospitales.API.Models;
+using Sistema_de_Gestion_de_Hospitales.API.Models.ModelConfiguration;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace API.Data;
+namespace Sistema_de_Gestion_de_Hospitales.API.Data;
 
 public partial class SistemaHospitalDbContext : IdentityDbContext
 {

@@ -1,9 +1,8 @@
-using API.Data;
-using API.Models;
-using API.Mapping;
+using Sistema_de_Gestion_de_Hospitales.API.Data;
+using Sistema_de_Gestion_de_Hospitales.API.Models;
+using Sistema_de_Gestion_de_Hospitales.API.Mapping;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 

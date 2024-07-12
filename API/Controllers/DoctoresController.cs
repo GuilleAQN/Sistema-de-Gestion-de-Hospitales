@@ -1,12 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Shared.Doctor;
-using API.Models;
-using API.Data;
-using API.Helper;
+using Sistema_de_Gestion_de_Hospitales.Shared.Doctor;
+using Sistema_de_Gestion_de_Hospitales.API.Models;
+using Sistema_de_Gestion_de_Hospitales.API.Data;
 
-namespace API.Controller
+namespace Sistema_de_Gestion_de_Hospitales.API.Controller
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -22,32 +21,12 @@ namespace API.Controller
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<DoctorGetDTO>>> GetDoctores([FromQuery] DoctorQueryObject query)
+        public async Task<ActionResult<IEnumerable<DoctorGetDTO>>> GetDoctores()
         {
-            var doctores = context.Doctores
+            var doctorList = await context.Doctores
                .Include(c => c.IdDepartamentoNavigation)
                .Include(c => c.IdEspecialidadNavigation)
-               .AsQueryable();
-
-            if (query != null)
-            {
-                doctores = query switch
-                {
-                    _ when !string.IsNullOrWhiteSpace(query.NombreCompleto) =>
-                    doctores.Where(s => s.NombreCompleto.Contains(query.NombreCompleto)),
-                    _ when !string.IsNullOrWhiteSpace(query.CorreoElectronico) =>
-                    doctores.Where(s => s.CorreoElectronico.Contains(query.CorreoElectronico)),
-                    _ when !string.IsNullOrWhiteSpace(query.IdEspecialidad) =>
-                    doctores.Where(s => s.IdEspecialidad.Equals(query.IdEspecialidad)),
-                    _ when !string.IsNullOrWhiteSpace(query.IdEspecialidad) =>
-                    doctores.Where(s => s.IdDepartamento.Equals(query.IdDepartamento)),
-                    _ when !(query.FechaContratacion != DateOnly.MinValue) =>
-                    doctores.Where(s => s.FechaContratacion >= query.FechaContratacion && s.FechaContratacion <= query.FechaContratacion),
-                    _ => doctores
-                };
-            }
-
-            var doctorList = await doctores.ToListAsync();
+               .ToListAsync();
             var doctoresDto = mapper.Map<IEnumerable<DoctorGetDTO>>(doctorList);
             return Ok(doctoresDto);
         }

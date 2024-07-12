@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace API.Models
+namespace Sistema_de_Gestion_de_Hospitales.API.Models
 {
     public class AppUser: IdentityUser
     {

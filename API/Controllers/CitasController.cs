@@ -1,12 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Shared.Cita;
-using API.Models;
-using API.Helper;
-using API.Data;
+using Sistema_de_Gestion_de_Hospitales.Shared.Cita;
+using Sistema_de_Gestion_de_Hospitales.API.Models;
+using Sistema_de_Gestion_de_Hospitales.API.Data;
 
-namespace API.Controller
+namespace Sistema_de_Gestion_de_Hospitales.API.Controller
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -22,30 +21,14 @@ namespace API.Controller
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CitaGetDTO>>> GetCitas([FromQuery] CitasQueryObject query)
+        public async Task<ActionResult<IEnumerable<CitaGetDTO>>> GetCitas()
         {
-            var citas = context.Citas
+            var citasList = await context.Citas
                 .Include(c => c.IdPacienteNavigation)
                 .Include(c => c.IdDoctorNavigation)
                 .Include(c => c.IdEnfermeraNavigation)
                 .Include(c => c.IdCategoriaCitaNavigation)
-                .AsQueryable();
-
-            if (query != null)
-            {
-                citas = query switch
-                {
-                    _ when !string.IsNullOrWhiteSpace(query.IdPaciente) => citas.Where(s => s.IdPaciente.Equals(query.IdPaciente)),
-                    _ when !string.IsNullOrWhiteSpace(query.IdDoctor) => citas.Where(s => s.IdDoctor.Equals(query.IdDoctor)),
-                    _ when !string.IsNullOrWhiteSpace(query.IdEnfermera) => citas.Where(s => s.IdEnfermera.Equals(query.IdEnfermera)),
-                    _ when !string.IsNullOrWhiteSpace(query.IdCategoriaCita) => citas.Where(s => s.IdCategoriaCita.Equals(query.IdCategoriaCita)),
-                    _ when !(query.Fecha != DateTime.MinValue) => 
-                    citas.Where(s => s.Fecha <= query.Fecha),
-                    _ => citas
-                };
-            }
-
-            var citasList = await citas.ToListAsync();
+                .ToListAsync();
             var citasDto = mapper.Map<IEnumerable<CitaGetDTO>>(citasList);
             return Ok(citasDto);
         }

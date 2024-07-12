@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using API.Controller;
-using Shared.Doctor;
-using API.Models;
-using API.Data;
+using Sistema_de_Gestion_de_Hospitales.API.Controller;
+using Sistema_de_Gestion_de_Hospitales.Shared.Doctor;
+using Sistema_de_Gestion_de_Hospitales.API.Models;
+using Sistema_de_Gestion_de_Hospitales.API.Data;
 
-namespace API.UnitTest
+namespace Sistema_de_Gestion_de_Hospitales.API.UnitTest
 {
     public class DoctoresControllerTest
     {

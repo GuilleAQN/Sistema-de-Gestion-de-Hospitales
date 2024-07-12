@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 
-namespace API.Middleware
+namespace Sistema_de_Gestion_de_Hospitales.API.Middleware
 {
     public class ExceptionHandlerMiddleware
     {

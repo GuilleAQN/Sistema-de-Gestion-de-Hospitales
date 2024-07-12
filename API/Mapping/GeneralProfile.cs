@@ -1,15 +1,15 @@
 ﻿using AutoMapper;
-using API.Models;
-using Shared.CategoriasCita;
-using Shared.Cita;
-using Shared.Departamento;
-using Shared.Diagnostico;
-using Shared.Especialidad;
-using Shared.Estado;
-using Shared.Habitacion;
-using Shared.Tratamiento;
+using Sistema_de_Gestion_de_Hospitales.API.Models;
+using Sistema_de_Gestion_de_Hospitales.Shared.CategoriasCita;
+using Sistema_de_Gestion_de_Hospitales.Shared.Cita;
+using Sistema_de_Gestion_de_Hospitales.Shared.Departamento;
+using Sistema_de_Gestion_de_Hospitales.Shared.Diagnostico;
+using Sistema_de_Gestion_de_Hospitales.Shared.Especialidad;
+using Sistema_de_Gestion_de_Hospitales.Shared.Estado;
+using Sistema_de_Gestion_de_Hospitales.Shared.Habitacion;
+using Sistema_de_Gestion_de_Hospitales.Shared.Tratamiento;
 
-namespace API.Mapping
+namespace Sistema_de_Gestion_de_Hospitales.API.Mapping
 {
     public class GeneralProfile : Profile
     {

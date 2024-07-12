@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using API.Controller;
-using Shared.Cita;
-using API.Models;
-using API.Data;
+using Sistema_de_Gestion_de_Hospitales.API.Controller;
+using Sistema_de_Gestion_de_Hospitales.Shared.Cita;
+using Sistema_de_Gestion_de_Hospitales.API.Models;
+using Sistema_de_Gestion_de_Hospitales.API.Data;
 
-namespace API.UnitTest
+namespace Sistema_de_Gestion_de_Hospitales.API.UnitTest
 {
     public class CitasControllerTests
     {
