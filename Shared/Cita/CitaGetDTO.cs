@@ -1,4 +1,4 @@
-﻿namespace Shared.Cita
+﻿namespace Sistema_de_Gestion_de_Hospitales.Shared.Cita
 {
     public class CitaGetDTO
     {

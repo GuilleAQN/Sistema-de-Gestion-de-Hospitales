@@ -1,4 +1,4 @@
-﻿namespace Shared.Especialidad
+﻿namespace Sistema_de_Gestion_de_Hospitales.Shared.Especialidad
 {
     public class EspecialidadGetDTO
     {

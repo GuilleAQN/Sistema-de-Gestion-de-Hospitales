@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Shared.Habitacion
+namespace Sistema_de_Gestion_de_Hospitales.Shared.Habitacion
 {
     public class HabitacionInsertDTO
     {

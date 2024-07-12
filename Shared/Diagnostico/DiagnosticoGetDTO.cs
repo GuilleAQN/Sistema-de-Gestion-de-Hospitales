@@ -1,4 +1,4 @@
-﻿namespace Shared.Diagnostico
+﻿namespace Sistema_de_Gestion_de_Hospitales.Shared.Diagnostico
 {
     public class DiagnosticoGetDTO
     {

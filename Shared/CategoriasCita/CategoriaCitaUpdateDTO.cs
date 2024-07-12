@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Shared.CategoriasCita
+namespace Sistema_de_Gestion_de_Hospitales.Shared.CategoriasCita
 {
     public class CategoriaCitaUpdateDTO
     {

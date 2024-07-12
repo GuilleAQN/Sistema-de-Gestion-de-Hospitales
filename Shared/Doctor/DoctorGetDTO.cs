@@ -1,4 +1,4 @@
-﻿namespace Shared.Doctor
+﻿namespace Sistema_de_Gestion_de_Hospitales.Shared.Doctor
 {
     public class DoctorGetDTO
     {

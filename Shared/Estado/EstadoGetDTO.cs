@@ -1,4 +1,4 @@
-﻿namespace Shared.Estado
+﻿namespace Sistema_de_Gestion_de_Hospitales.Shared.Estado
 {
     public class EstadoGetDTO
     {

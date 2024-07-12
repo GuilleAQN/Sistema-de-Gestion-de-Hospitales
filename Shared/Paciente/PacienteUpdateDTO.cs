@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Shared.Paciente
+namespace Sistema_de_Gestion_de_Hospitales.Shared.Paciente
 {
     public class PacienteUpdateDTO
     {

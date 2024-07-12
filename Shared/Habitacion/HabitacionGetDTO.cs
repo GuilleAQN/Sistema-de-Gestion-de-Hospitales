@@ -1,4 +1,4 @@
-﻿namespace Shared.Habitacion
+﻿namespace Sistema_de_Gestion_de_Hospitales.Shared.Habitacion
 {
     public class HabitacionGetDTO
     {

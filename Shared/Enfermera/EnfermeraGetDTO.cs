@@ -1,4 +1,4 @@
-﻿namespace Shared.Enfermera
+﻿namespace Sistema_de_Gestion_de_Hospitales.Shared.Enfermera
 {
     public class EnfermeraGetDTO
     {

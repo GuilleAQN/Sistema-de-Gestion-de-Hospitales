@@ -1,4 +1,4 @@
-﻿namespace Shared.Tratamiento
+﻿namespace Sistema_de_Gestion_de_Hospitales.Shared.Tratamiento
 {
     public class TratamientoGetDTO
     {

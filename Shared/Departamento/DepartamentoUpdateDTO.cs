@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Shared.Departamento
+namespace Sistema_de_Gestion_de_Hospitales.Shared.Departamento
 {
     public class DepartamentoUpdateDTO
     {
