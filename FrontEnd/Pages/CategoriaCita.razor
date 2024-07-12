@@ -1,0 +1,70 @@
+﻿@page "/categoria"
+
+@using Sistema_de_Gestion_de_Hospitales.FrontEnd.Interfaces
+@using Sistema_de_Gestion_de_Hospitales.Shared
+@using MudBlazor
+
+@inject ICategoriasCitasService CategoriasCitasService
+@inject IDialogService DialogService
+
+<MudContainer MaxWidth="MaxWidth.Large" Style="margin-top: 20px;">
+    <MudPaper>
+        <MudText Typo="Typo.h6" GutterBottom="true">Categorías de Citas</MudText>
+        <MudDataGrid T="CategoriaCitaGetDTO" Items="@categoriasCitas" Hover="true" Dense="true" Filterable="true" Sortable="true">
+            <Columns>
+                <PropertyColumn Property="x => x.IdCategoriaCita" Title="ID" />
+                <PropertyColumn Property="x => x.Nombre" Title="Nombre" />
+                <TemplateColumn CellClass="d-flex justify-end">
+                    <CellTemplate>
+                        <MudStack Row>
+                            <MudButton Color="Color.Primary">Edit</MudButton>
+                            <MudButton Color="Color.Error">Delete</MudButton>
+                        </MudStack>
+                    </CellTemplate>
+                </TemplateColumn>
+            </Columns>
+            <PagerContent>
+                <MudDataGridPager T="CategoriaCitaGetDTO" PageSizeOptions="[5,10,15]"/>
+            </PagerContent>
+        </MudDataGrid>
+    </MudPaper>
+</MudContainer>
+
+@code {
+    private IEnumerable<CategoriaCitaGetDTO>? categoriasCitas = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        categoriasCitas = await CategoriasCitasService.GetCategoriasCitasAsync();
+        
+    }
+
+    private void EditCategoriaCita(CategoriaCitaGetDTO categoria)
+    {
+        // Lógica para editar la categoría de cita
+        Console.WriteLine($"Editando categoría: {categoria.Nombre}");
+    }
+
+    private async Task DeleteCategoriaCita(CategoriaCitaGetDTO categoria)
+    {
+        bool? confirmed = await DialogService.ShowMessageBox(
+            "Confirmar",
+            $"¿Estás seguro de que deseas eliminar la categoría {categoria.Nombre}?",
+            yesText: "Eliminar", cancelText: "Cancelar");
+
+        if (confirmed == true)
+        {
+            var success = await CategoriasCitasService.DeleteCategoriasCitaAsync(categoria.IdCategoriaCita);
+            if (success)
+            {
+                categoriasCitas = await CategoriasCitasService.GetCategoriasCitasAsync();
+            }
+            else
+            {
+                // Mostrar mensaje de error si la eliminación falla
+                await DialogService.ShowMessageBox("Error", "No se pudo eliminar la categoría.");
+            }
+        }
+    }
+}
+
