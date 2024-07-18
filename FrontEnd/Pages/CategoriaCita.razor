@@ -1,48 +1,112 @@
-﻿@page "/categoria"
+﻿@page "/categorias-citas"
 
 @using Sistema_de_Gestion_de_Hospitales.FrontEnd.Interfaces
 @using Sistema_de_Gestion_de_Hospitales.Shared
 @using MudBlazor
 
 @inject ICategoriasCitasService CategoriasCitasService
+@inject NavigationManager NavigationManager
 @inject IDialogService DialogService
+
+<PageTitle>Categoria de Citas</PageTitle>
 
 <MudContainer MaxWidth="MaxWidth.Large" Style="margin-top: 20px;">
     <MudPaper>
-        <MudText Typo="Typo.h6" GutterBottom="true">Categorías de Citas</MudText>
-        <MudDataGrid T="CategoriaCitaGetDTO" Items="@categoriasCitas" Hover="true" Dense="true" Filterable="true" Sortable="true">
-            <Columns>
-                <PropertyColumn Property="x => x.IdCategoriaCita" Title="ID" />
-                <PropertyColumn Property="x => x.Nombre" Title="Nombre" />
-                <TemplateColumn CellClass="d-flex justify-end">
-                    <CellTemplate>
-                        <MudStack Row>
-                            <MudButton Color="Color.Primary">Edit</MudButton>
-                            <MudButton Color="Color.Error">Delete</MudButton>
-                        </MudStack>
-                    </CellTemplate>
-                </TemplateColumn>
-            </Columns>
-            <PagerContent>
-                <MudDataGridPager T="CategoriaCitaGetDTO" PageSizeOptions="[5,10,15]"/>
-            </PagerContent>
-        </MudDataGrid>
+        @if (_isLoading)
+        {
+            <MudProgressLinear Color="Color.Primary" Indeterminate="true" />
+        }
+        else if (categoriasCitas != null && categoriasCitas.Any())
+        {
+            <MudGrid Container="true" Justify="Justify.SpaceBetween" Class="ml-2" Spacing="3">
+                <MudItem xs="8">
+                    <MudText Typo="Typo.h6" GutterBottom="true">Categorías de Citas</MudText>
+                    <MudButton Class="mb-4" Variant="Variant.Filled" DropShadow="false" Color="Color.Primary" @onclick="AbrirFormularioInsercion">Agregar Nueva Categoría</MudButton>
+                </MudItem>
+            </MudGrid>
+            <MudDataGrid T="CategoriaCitaGetDTO" MultiSelection="true" Items="@categoriasCitas" Hover="true" Dense="true" Filterable="true" Sortable="true">
+                <Columns>
+                    <SelectColumn T="CategoriaCitaGetDTO" Hidden />
+                    <PropertyColumn Property="x => x.IdCategoriaCita" Title="ID" />
+                    <PropertyColumn Property="x => x.Nombre" Title="Nombre" />
+                    <TemplateColumn>
+                        <CellTemplate>
+                            <MudStack Row>
+                                <MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Secondary" Size="Size.Medium" @onclick="() => EditCategoriaCita(context.Item)"></MudIconButton>
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error" Size="Size.Medium" @onclick="() => DeleteCategoriaCita(context.Item)"></MudIconButton>
+                            </MudStack>
+                        </CellTemplate>
+                    </TemplateColumn>
+                </Columns>
+                <PagerContent>
+                    <MudDataGridPager T="CategoriaCitaGetDTO" PageSizeOptions="[5,10,15]" />
+                </PagerContent>
+            </MudDataGrid>
+            <style>
+                .dialog-show {
+                    backdrop-filter: blur(10px);
+                }
+            </style>
+        }
+        else
+        {
+            <MudGrid Container="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Spacing="2">
+                <MudItem>
+                    <MudText Typo="Typo.h6" GutterBottom="true">Categorías de Citas</MudText>
+                    <MudText Typo="Typo.subtitle1" Align="Align.Center">No se encontro ningún resultado.</MudText>
+                    <MudButton Color="Color.Primary" @onclick="AbrirFormularioInsercion">Agregar Nueva Categoría</MudButton>
+                </MudItem>
+            </MudGrid>
+        }
     </MudPaper>
 </MudContainer>
 
 @code {
     private IEnumerable<CategoriaCitaGetDTO>? categoriasCitas = null;
+    private bool _isLoading = true;
 
     protected override async Task OnInitializedAsync()
     {
-        categoriasCitas = await CategoriasCitasService.GetCategoriasCitasAsync();
-        
+        await CargarCategorias();
     }
 
-    private void EditCategoriaCita(CategoriaCitaGetDTO categoria)
+    private async Task CargarCategorias()
     {
-        // Lógica para editar la categoría de cita
-        Console.WriteLine($"Editando categoría: {categoria.Nombre}");
+        try
+        {
+            categoriasCitas = await CategoriasCitasService.GetCategoriasCitasAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al cargar categorías: {ex.Message}");
+        }
+        finally
+        {
+            _isLoading = false;
+            await InvokeAsync(StateHasChanged); 
+        }
+    }
+
+    private async Task AbrirFormularioInsercion()
+    {   
+        var parameters = new DialogParameters { { "Model", new CategoriaCitaInsertDTO() } };
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true, BackgroundClass = "dialog-show" };
+
+        await DialogService.ShowAsync<InsertCategoriaCita>("Nueva Categoría de Cita", parameters, options);
+    }
+
+    private async Task EditCategoriaCita(CategoriaCitaGetDTO categoria)
+    {
+        var parameters = new DialogParameters { { "Model", categoria } };
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true, BackgroundClass = "dialog-show" };
+
+        var dialog = await DialogService.ShowAsync<UpdateCategoriaCita>("Actualizar Categoría Cita", parameters, options);
+        var result = dialog.Result;
+
+        if (!result.IsCanceled)
+        {
+            await CargarCategorias();
+        }
     }
 
     private async Task DeleteCategoriaCita(CategoriaCitaGetDTO categoria)
@@ -57,14 +121,12 @@
             var success = await CategoriasCitasService.DeleteCategoriasCitaAsync(categoria.IdCategoriaCita);
             if (success)
             {
-                categoriasCitas = await CategoriasCitasService.GetCategoriasCitasAsync();
+                await CargarCategorias();
             }
             else
             {
-                // Mostrar mensaje de error si la eliminación falla
                 await DialogService.ShowMessageBox("Error", "No se pudo eliminar la categoría.");
             }
         }
     }
 }
-
