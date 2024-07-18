@@ -12,7 +12,7 @@ namespace Sistema_de_Gestion_de_Hospitales.API.Mapping
         {
             CreateMap<DoctorGetDTO, Doctor>()
                 .ForPath(dest => dest.IdDepartamentoNavigation.Nombre, opt => opt.MapFrom(src => src.NombreDepartamento))
-                .ForPath(dest => dest.IdEspecialidad, opt => opt.MapFrom(src => src.NombreEspecialidad))
+                .ForPath(dest => dest.IdEspecialidadNavigation.Nombre, opt => opt.MapFrom(src => src.NombreEspecialidad))
                 .ReverseMap();
             CreateMap<DoctorInsertDTO, Doctor>().ReverseMap();
             CreateMap<DoctorUpdateDTO, Doctor>().ReverseMap();
