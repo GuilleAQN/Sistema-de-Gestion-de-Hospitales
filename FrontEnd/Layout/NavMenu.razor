@@ -10,23 +10,83 @@
 <div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu">
     <nav class="flex-column">
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
+            <NavLink class="nav-link d-flex align-items-center" href="" Match="NavLinkMatch.All">
+                <span class="fa-stack fa-1x me-2">
+                    <i class="fas fa-home fa-stack-2x"></i>
+                </span>
+                Home
             </NavLink>
         </div>
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="counter">
-                <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> Counter
+            <NavLink class="nav-link d-flex align-items-center" href="categorias-citas" Match="NavLinkMatch.All">
+                <span class="fa-stack fa-1x me-2">
+                    <i class="fas fa-tags fa-stack-2x"></i>
+                </span>
+                Categorias de Citas
             </NavLink>
         </div>
-@*         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
-            </NavLink>
-        </div> *@
         <div class="nav-item px-3">
-            <NavLink class="nav-link" href="categoria">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> CategoriaCitas
+            <NavLink class="nav-link d-flex align-items-center" href="citas" Match="NavLinkMatch.All">
+                <span class="fa-stack fa-1x me-2">
+                    <i class="fas fa-calendar-alt fa-stack-2x"></i>
+                </span>
+                Citas
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link d-flex align-items-center" href="departamentos" Match="NavLinkMatch.All">
+                <span class="fa-stack fa-1x me-2">
+                    <i class="fas fa-building fa-stack-2x"></i>
+                </span>
+                Departamentos
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link d-flex align-items-center" href="doctores" Match="NavLinkMatch.All">
+                <span class="fa-stack fa-1x me-2">
+                    <i class="fas fa-user-md fa-stack-2x"></i>
+                </span>
+                Doctores
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link d-flex align-items-center" href="enfermeras" Match="NavLinkMatch.All">
+                <span class="fa-stack fa-1x me-2">
+                    <i class="fas fa-user-nurse fa-stack-2x"></i>
+                </span>
+                Enfermeras
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link d-flex align-items-center" href="enfermeras" Match="NavLinkMatch.All">
+                <span class="fa-stack fa-1x me-2">
+                    <i class="fas fa-stethoscope fa-stack-2x"></i>
+                </span>
+                Enfermeras
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="estados">
+                <span class="fa-stack fa-1x me-2">
+                    <i class="fas fa-map-marker-alt fa-stack-2x"></i>
+                </span>
+                Estados
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="habitaciones">
+                <span class="fa-stack fa-1x me-2">
+                    <i class="fas fa-bed fa-stack-2x"></i>
+                </span>
+                Habitaciones
+            </NavLink>
+        </div>
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="tratamientos">
+               <span class="fa-stack fa-1x me-2">
+                    <i class="fas fa-medkit fa-stack-2x"></i>
+                </span>
+                Tratamientos
             </NavLink>
         </div>
     </nav>
