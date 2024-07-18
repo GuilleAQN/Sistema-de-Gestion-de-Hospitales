@@ -29,6 +29,7 @@ namespace Sistema_de_Gestion_de_Hospitales.API.Controller
                 .Include(c => c.IdEnfermeraNavigation)
                 .Include(c => c.IdCategoriaCitaNavigation)
                 .ToListAsync();
+
             var citasDto = mapper.Map<IEnumerable<CitaGetDTO>>(citasList);
             return Ok(citasDto);
         }
@@ -99,7 +100,7 @@ namespace Sistema_de_Gestion_de_Hospitales.API.Controller
         public async Task<ActionResult<Cita>> PostCita(CitaInsertDTO citaDto)
         {
             var cita = mapper.Map<Cita>(citaDto);
-            context.Citas.Add(cita);
+            await context.Citas.AddAsync(cita);
             await context.SaveChangesAsync();
 
             return Ok(cita.IdCita);

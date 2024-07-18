@@ -23,7 +23,9 @@ namespace Sistema_de_Gestion_de_Hospitales.API.Controller
         [HttpGet]
         public async Task<ActionResult<IEnumerable<EnfermeraGetDTO>>> GetEnfermeras()
         {
-            var enfermeraList = await context.Enfermeras.ToListAsync();
+            var enfermeraList = await context.Enfermeras
+                .Include(c => c.IdDepartamentoNavigation)
+                .ToListAsync();
             var enfermerasDto = mapper.Map<IEnumerable<EnfermeraGetDTO>>(enfermeraList);
             return Ok(enfermerasDto);
         }

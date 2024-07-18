@@ -24,9 +24,9 @@ namespace Sistema_de_Gestion_de_Hospitales.API.Controller
         public async Task<ActionResult<IEnumerable<DoctorGetDTO>>> GetDoctores()
         {
             var doctorList = await context.Doctores
-               .Include(c => c.IdDepartamentoNavigation)
-               .Include(c => c.IdEspecialidadNavigation)
-               .ToListAsync();
+                .Include(c => c.IdEspecialidadNavigation)
+                .Include(c => c.IdDepartamentoNavigation)
+                .ToListAsync();
             var doctoresDto = mapper.Map<IEnumerable<DoctorGetDTO>>(doctorList);
             return Ok(doctoresDto);
         }
@@ -98,7 +98,7 @@ namespace Sistema_de_Gestion_de_Hospitales.API.Controller
         {
             var doctor = mapper.Map<Doctor>(doctorDto);
 
-            if (await DoctorExists(doctor?.Cedula))
+            if (await DoctorExists(doctor.Cedula))
             {
                 return BadRequest(new ProblemDetails
                 {
@@ -109,7 +109,7 @@ namespace Sistema_de_Gestion_de_Hospitales.API.Controller
                 });
             }
 
-            context.Doctores.Add(doctor);
+            await context.Doctores.AddAsync(doctor);
             await context.SaveChangesAsync();
 
             return Ok(doctor.IdDoctor);
