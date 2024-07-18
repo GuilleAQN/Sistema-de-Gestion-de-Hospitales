@@ -6,9 +6,9 @@
         public int IdPaciente { get; set; }
         public int IdDoctor { get; set; }
         public int IdEnfermera { get; set; }
-        public DateTime Fecha { get; set; }
+        public DateTime? Fecha { get; set; }
         public int IdCategoriaCita { get; set; }
-        public string Descripción { get; set; } = null!;
+        public string Descripcion { get; set; } = null!;
         public string NombrePaciente { get; set; } = null!;
         public string NombreDoctor { get; set; } = null!;
         public string NombreEnfermera { get; set; } = null!;

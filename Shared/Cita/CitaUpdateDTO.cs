@@ -18,7 +18,7 @@ namespace Sistema_de_Gestion_de_Hospitales.Shared.Cita
 
         [Required]
         [Range(typeof(DateTime), "1990-01-01 00:00:00.00", "2050-12-31 23:59:59.99", ErrorMessage = "{0} debe estar entre el {1} y el {2}.")]
-        public DateTime Fecha { get; set; }
+        public DateTime? Fecha { get; set; }
 
         [Required(ErrorMessage = "Código de la Categoría de la Cita es requerido")]
         public int IdCategoriaCita { get; set; }

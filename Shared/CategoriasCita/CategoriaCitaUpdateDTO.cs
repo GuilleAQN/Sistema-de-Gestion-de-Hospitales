@@ -6,9 +6,11 @@ namespace Sistema_de_Gestion_de_Hospitales.Shared.CategoriasCita
     {
         [Required(ErrorMessage = "Id es requerido")]
         public int IdCategoriaCita { get; set; }
+
         [Required(ErrorMessage = "Nombre es requerido")]
         [MaxLength(35, ErrorMessage = "Nombre no puede ser mayor a 35 carácteres")]
         public string Nombre { get; set; } = null!;
+
 
         [Required(ErrorMessage = "Descripción es requerido")]
         [MaxLength(150, ErrorMessage = "Descripción no puede ser mayor a 150 carácteres")]
