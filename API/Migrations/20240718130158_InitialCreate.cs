@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Sistema_de_Gestion_de_Hospitales.API.Migrations
+namespace API.Migrations
 {
     /// <inheritdoc />
     public partial class InitialCreate : Migration
@@ -105,22 +105,6 @@ namespace Sistema_de_Gestion_de_Hospitales.API.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK__Estados__FBB0EDC1662ECE55", x => x.IdEstado);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Habitaciones",
-                columns: table => new
-                {
-                    IdHabitacion = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Numero = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
-                    Piso = table.Column<int>(type: "int", nullable: false),
-                    Tipo = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
-                    IdEstado = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK__Habitaci__8BBBF9010102AE43", x => x.IdHabitacion);
                 });
 
             migrationBuilder.CreateTable(
@@ -249,33 +233,6 @@ namespace Sistema_de_Gestion_de_Hospitales.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Doctores",
-                columns: table => new
-                {
-                    IdDoctor = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Cedula = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    NombreCompleto = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    FechaContratacion = table.Column<DateOnly>(type: "date", nullable: false),
-                    Direccion = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Telefono = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CorreoElectronico = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IdEspecialidad = table.Column<int>(type: "int", nullable: false),
-                    IdDepartamento = table.Column<int>(type: "int", nullable: false),
-                    IdDepartamentoNavigationIdDepartamento = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Doctores", x => x.IdDoctor);
-                    table.ForeignKey(
-                        name: "FK_Doctores_Departamentos_IdDepartamentoNavigationIdDepartamento",
-                        column: x => x.IdDepartamentoNavigationIdDepartamento,
-                        principalTable: "Departamentos",
-                        principalColumn: "IdDepartamento",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Enfermeras",
                 columns: table => new
                 {
@@ -300,29 +257,54 @@ namespace Sistema_de_Gestion_de_Hospitales.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Diagnosticos",
+                name: "Doctores",
                 columns: table => new
                 {
-                    IdDiagnostico = table.Column<int>(type: "int", nullable: false)
+                    IdDoctor = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    IdPaciente = table.Column<int>(type: "int", nullable: false),
-                    IdDoctor = table.Column<int>(type: "int", nullable: false),
-                    Fecha = table.Column<DateOnly>(type: "date", nullable: false),
-                    Descripcion = table.Column<string>(type: "text", nullable: false)
+                    Cedula = table.Column<string>(type: "nvarchar(11)", maxLength: 11, nullable: false),
+                    NombreCompleto = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    FechaContratacion = table.Column<DateOnly>(type: "date", nullable: false),
+                    Direccion = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    Telefono = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
+                    CorreoElectronico = table.Column<string>(type: "nvarchar(60)", maxLength: 60, nullable: true),
+                    IdEspecialidad = table.Column<int>(type: "int", nullable: false),
+                    IdDepartamento = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK__Diagnost__BD16DB691D10418D", x => x.IdDiagnostico);
+                    table.PrimaryKey("PK__Doctores__F838DB3E706836D6", x => x.IdDoctor);
                     table.ForeignKey(
-                        name: "FK__Diagnosti__IdDoc__403A8C7D",
-                        column: x => x.IdDoctor,
-                        principalTable: "Doctores",
-                        principalColumn: "IdDoctor");
+                        name: "FK__Doctores__IdDepa__31EC6D26",
+                        column: x => x.IdDepartamento,
+                        principalTable: "Departamentos",
+                        principalColumn: "IdDepartamento");
                     table.ForeignKey(
-                        name: "FK__Diagnosti__IdPac__3F466844",
-                        column: x => x.IdPaciente,
-                        principalTable: "Pacientes",
-                        principalColumn: "IdPaciente");
+                        name: "FK__Doctores__IdEspecialidad__3C34244G9365KKNSVB",
+                        column: x => x.IdEspecialidad,
+                        principalTable: "Especialidades",
+                        principalColumn: "IdEspecialidad");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Habitaciones",
+                columns: table => new
+                {
+                    IdHabitacion = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Numero = table.Column<string>(type: "nvarchar(5)", maxLength: 5, nullable: false),
+                    Piso = table.Column<int>(type: "int", nullable: false),
+                    Tipo = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    IdEstado = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK__Habitaci__8BBBF9010102AE43", x => x.IdHabitacion);
+                    table.ForeignKey(
+                        name: "FK__Estado__Habitacion__3C3456532CG",
+                        column: x => x.IdEstado,
+                        principalTable: "Estados",
+                        principalColumn: "IdEstado");
                 });
 
             migrationBuilder.CreateTable(
@@ -331,9 +313,9 @@ namespace Sistema_de_Gestion_de_Hospitales.API.Migrations
                 {
                     IdCita = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    IdPaciente = table.Column<int>(type: "int", nullable: false),
-                    IdDoctor = table.Column<int>(type: "int", nullable: false),
-                    IdEnfermera = table.Column<int>(type: "int", nullable: false),
+                    IdPaciente = table.Column<int>(type: "int", nullable: true),
+                    IdDoctor = table.Column<int>(type: "int", nullable: true),
+                    IdEnfermera = table.Column<int>(type: "int", nullable: true),
                     Fecha = table.Column<DateTime>(type: "datetime2", nullable: false),
                     IdCategoriaCita = table.Column<int>(type: "int", nullable: false),
                     Descripción = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false)
@@ -364,13 +346,39 @@ namespace Sistema_de_Gestion_de_Hospitales.API.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Diagnosticos",
+                columns: table => new
+                {
+                    IdDiagnostico = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    IdPaciente = table.Column<int>(type: "int", nullable: false),
+                    IdDoctor = table.Column<int>(type: "int", nullable: false),
+                    Fecha = table.Column<DateOnly>(type: "date", nullable: false),
+                    Descripcion = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK__Diagnost__BD16DB691D10418D", x => x.IdDiagnostico);
+                    table.ForeignKey(
+                        name: "FK__Diagnosti__IdDoc__403A8C7D",
+                        column: x => x.IdDoctor,
+                        principalTable: "Doctores",
+                        principalColumn: "IdDoctor");
+                    table.ForeignKey(
+                        name: "FK__Diagnosti__IdPac__3F466844",
+                        column: x => x.IdPaciente,
+                        principalTable: "Pacientes",
+                        principalColumn: "IdPaciente");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Tratamientos",
                 columns: table => new
                 {
                     IdTratamiento = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     IdDiagnostico = table.Column<int>(type: "int", nullable: false),
-                    IdDoctor = table.Column<int>(type: "int", nullable: false),
+                    IdDoctor = table.Column<int>(type: "int", nullable: true),
                     Descripcion = table.Column<string>(type: "text", nullable: false),
                     FechaInicio = table.Column<DateOnly>(type: "date", nullable: false),
                     FechaFin = table.Column<DateOnly>(type: "date", nullable: false)
@@ -460,14 +468,24 @@ namespace Sistema_de_Gestion_de_Hospitales.API.Migrations
                 column: "IdPaciente");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Doctores_IdDepartamentoNavigationIdDepartamento",
+                name: "IX_Doctores_IdDepartamento",
                 table: "Doctores",
-                column: "IdDepartamentoNavigationIdDepartamento");
+                column: "IdDepartamento");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Doctores_IdEspecialidad",
+                table: "Doctores",
+                column: "IdEspecialidad");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Enfermeras_IdDepartamento",
                 table: "Enfermeras",
                 column: "IdDepartamento");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Habitaciones_IdEstado",
+                table: "Habitaciones",
+                column: "IdEstado");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tratamientos_IdDiagnostico",
@@ -502,12 +520,6 @@ namespace Sistema_de_Gestion_de_Hospitales.API.Migrations
                 name: "Citas");
 
             migrationBuilder.DropTable(
-                name: "Especialidades");
-
-            migrationBuilder.DropTable(
-                name: "Estados");
-
-            migrationBuilder.DropTable(
                 name: "Habitaciones");
 
             migrationBuilder.DropTable(
@@ -526,6 +538,9 @@ namespace Sistema_de_Gestion_de_Hospitales.API.Migrations
                 name: "Enfermeras");
 
             migrationBuilder.DropTable(
+                name: "Estados");
+
+            migrationBuilder.DropTable(
                 name: "Diagnosticos");
 
             migrationBuilder.DropTable(
@@ -536,6 +551,9 @@ namespace Sistema_de_Gestion_de_Hospitales.API.Migrations
 
             migrationBuilder.DropTable(
                 name: "Departamentos");
+
+            migrationBuilder.DropTable(
+                name: "Especialidades");
         }
     }
 }

@@ -19,7 +19,7 @@ public partial class Enfermera
 
     public string? CorreoElectronico { get; set; }
 
-    public int IdDepartamento { get; set; }
+    public int? IdDepartamento { get; set; }
 
     public virtual ICollection<Cita> Cita { get; set; } = new List<Cita>();
 

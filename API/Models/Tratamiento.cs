@@ -9,7 +9,7 @@ public partial class Tratamiento
 
     public int IdDiagnostico { get; set; }
 
-    public int IdDoctor { get; set; }
+    public int? IdDoctor { get; set; }
 
     public string Descripcion { get; set; } = null!;
 

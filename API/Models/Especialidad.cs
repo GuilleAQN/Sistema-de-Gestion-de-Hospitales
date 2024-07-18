@@ -11,5 +11,5 @@ public partial class Especialidad
 
     public string Descripcion { get; set; } = null!;
 
-    public virtual ICollection<Doctor> Doctor { get; set; } = new List<Doctor>();
+    public virtual ICollection<Doctor> Doctores { get; set; } = new List<Doctor>();
 }

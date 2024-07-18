@@ -21,7 +21,7 @@ public partial class Doctor
 
     public int IdEspecialidad { get; set; }
 
-    public int IdDepartamento { get; set; }
+    public int? IdDepartamento { get; set; }
 
     public virtual ICollection<Cita> Cita { get; set; } = new List<Cita>();
 

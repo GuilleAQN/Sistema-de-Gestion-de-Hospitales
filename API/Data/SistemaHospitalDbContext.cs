@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Sistema_de_Gestion_de_Hospitales.API.Data;
 
-public partial class SistemaHospitalDbContext : IdentityDbContext
+public partial class SistemaHospitalDbContext : IdentityDbContext<AppUser>
 {
     public SistemaHospitalDbContext()
     {
@@ -52,11 +52,13 @@ public partial class SistemaHospitalDbContext : IdentityDbContext
         modelBuilder.ApplyConfiguration(new DepartamentosConfiguration());
         
         modelBuilder.ApplyConfiguration(new DiagnosticosConfiguration());
-        
+
+        modelBuilder.ApplyConfiguration(new DoctoresConfiguration());
+
         modelBuilder.ApplyConfiguration(new EnfermerasConfiguration());
-        
+
         modelBuilder.ApplyConfiguration(new EspecialidadesConfiguration());
-        
+
         modelBuilder.ApplyConfiguration(new EstadosConfiguration());
         
         modelBuilder.ApplyConfiguration(new HabitacionesConfiguration());
