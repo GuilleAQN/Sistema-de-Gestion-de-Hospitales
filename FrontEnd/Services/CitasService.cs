@@ -31,16 +31,16 @@ namespace Sistema_de_Gestion_de_Hospitales.FrontEnd.Services
             return await response.Content.ReadFromJsonAsync<int>();
         }
 
-        public async Task UpdateCita(int id, CitaUpdateDTO citaDto)
+        public async Task<bool> UpdateCita(int id, CitaUpdateDTO citaDto)
         {
             var response = await httpClient.PutAsJsonAsync($"{BaseUrl}/{id}", citaDto);
-            response.EnsureSuccessStatusCode();
+            return response.IsSuccessStatusCode;
         }
 
-        public async Task DeleteCita(int id)
+        public async Task<bool> DeleteCita(int id)
         {
             var response = await httpClient.DeleteAsync($"{BaseUrl}/{id}");
-            response.EnsureSuccessStatusCode();
+            return response.IsSuccessStatusCode;
         }
     }
 }
