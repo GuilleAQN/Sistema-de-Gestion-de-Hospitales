@@ -4,6 +4,7 @@ using Sistema_de_Gestion_de_Hospitales.API.Controller;
 using Sistema_de_Gestion_de_Hospitales.Shared.Habitacion;
 using Sistema_de_Gestion_de_Hospitales.API.Models;
 using Sistema_de_Gestion_de_Hospitales.API.Data;
+using API.UnitTest;
 
 namespace Sistema_de_Gestion_de_Hospitales.API.UnitTest
 {
@@ -21,21 +22,7 @@ namespace Sistema_de_Gestion_de_Hospitales.API.UnitTest
         [Fact]
         public void Setup()
         {
-            var estados = new List<Estado>
-            {
-                new Estado { Nombre = "B" },
-                new Estado { Nombre = "C" }
-            };
-            _fixture.Context.Estados.AddRange(estados);
-            _fixture.Context.SaveChanges();
-
-            var habitaciones = new List<Habitacion>
-            {
-                new Habitacion { Numero = "1", Piso = 1, Tipo = "Tipo A", IdEstado = 1 },
-                new Habitacion { Numero = "2", Piso = 2, Tipo = "Tipo B", IdEstado = 2 }
-            };
-            _fixture.Context.Habitaciones.AddRange(habitaciones);
-            _fixture.Context.SaveChanges();
+            SeedDataTest.SeedData(_fixture.Context);
         }
 
         [Fact]

@@ -4,6 +4,7 @@ using Sistema_de_Gestion_de_Hospitales.API.Controller;
 using Sistema_de_Gestion_de_Hospitales.Shared.CategoriasCita;
 using Sistema_de_Gestion_de_Hospitales.API.Models;
 using Sistema_de_Gestion_de_Hospitales.API.Data;
+using API.UnitTest;
 
 namespace Sistema_de_Gestion_de_Hospitales.API.UnitTest
 {
@@ -21,13 +22,7 @@ namespace Sistema_de_Gestion_de_Hospitales.API.UnitTest
         [Fact]
         public void Setup()
         {
-            var categoriasCitas = new List<CategoriasCita>
-            {
-                new CategoriasCita { IdCategoriaCita = 1, Nombre = "Categoria 1", Descripcion = "Descripcion 1" },
-                new CategoriasCita { IdCategoriaCita = 2, Nombre = "Categoria 1", Descripcion = "Descripcion 2" }
-            };
-            _fixture.Context.CategoriasCitas.AddRange(categoriasCitas);
-            _fixture.Context.SaveChanges();
+            SeedDataTest.SeedData(_fixture.Context);
         }
 
         [Fact]
@@ -113,7 +108,6 @@ namespace Sistema_de_Gestion_de_Hospitales.API.UnitTest
         [Fact]
         public async Task DeleteCategoriasCitas_ReturnsNoContent_WithValidId()
         {
-            // Act
             Setup();
             var result = await _controller.DeleteCategoriasCita(1);
 

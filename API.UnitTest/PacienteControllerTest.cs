@@ -2,6 +2,7 @@
 using Sistema_de_Gestion_de_Hospitales.API.Controller;
 using Sistema_de_Gestion_de_Hospitales.API.Models;
 using Sistema_de_Gestion_de_Hospitales.API.Data;
+using API.UnitTest;
 
 namespace Sistema_de_Gestion_de_Hospitales.API.UnitTest
 {
@@ -17,8 +18,16 @@ namespace Sistema_de_Gestion_de_Hospitales.API.UnitTest
         }
 
         [Fact]
+        public void Setup()
+        {
+            SeedDataTest.SeedData(_fixture.Context);
+        }
+
+        [Fact]
         public async Task GetPacientes_ReturnsOkResult()
         {
+            Setup();
+
             // Act
             var result = await _controller.GetPacientes();
 

@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using API.UnitTest;
+using Microsoft.AspNetCore.Mvc;
 using Sistema_de_Gestion_de_Hospitales.API.Controller;
-using Sistema_de_Gestion_de_Hospitales.Shared.Estado;
 using Sistema_de_Gestion_de_Hospitales.API.Data;
 
 namespace Sistema_de_Gestion_de_Hospitales.API.UnitTest
@@ -17,8 +17,15 @@ namespace Sistema_de_Gestion_de_Hospitales.API.UnitTest
         }
 
         [Fact]
+        public void Setup()
+        {
+            SeedDataTest.SeedData(_fixture.Context);
+        }
+
+        [Fact]
         public async Task GetEstados_ReturnsOkResult()
         {
+            Setup();
             // Act
             var result = await _controller.GetEstados();
 

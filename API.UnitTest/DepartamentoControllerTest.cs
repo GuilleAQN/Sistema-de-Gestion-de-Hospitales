@@ -4,6 +4,7 @@ using Sistema_de_Gestion_de_Hospitales.API.Controller;
 using Sistema_de_Gestion_de_Hospitales.Shared.Departamento;
 using Sistema_de_Gestion_de_Hospitales.API.Models;
 using Sistema_de_Gestion_de_Hospitales.API.Data;
+using API.UnitTest;
 
 namespace Sistema_de_Gestion_de_Hospitales.API.UnitTest
 {
@@ -21,29 +22,7 @@ namespace Sistema_de_Gestion_de_Hospitales.API.UnitTest
         [Fact]
         public void Setup()
         {
-
-            var departamentos = new List<Departamento>
-            {
-                new Departamento
-                {
-                    IdDepartamento = 1,
-                    Nombre = "Cardiología",
-                    Descripcion = "Departamento de Cardiología",
-                    Ubicación = "Edificio A, Planta 2",
-                    Telefono = "555-1234"
-                },
-                new Departamento
-                {
-                    IdDepartamento = 2,
-                    Nombre = "Neurología",
-                    Descripcion = "Departamento de Neurología",
-                    Ubicación = "Edificio B, Planta 3",
-                    Telefono = "555-5678"
-                }
-            };
-
-            _fixture.Context.Departamentos.AddRange(departamentos);
-            _fixture.Context.SaveChanges();
+            SeedDataTest.SeedData(_fixture.Context);
         }
 
         [Fact]
