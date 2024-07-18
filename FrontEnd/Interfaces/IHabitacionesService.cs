@@ -7,7 +7,7 @@ namespace Sistema_de_Gestion_de_Hospitales.FrontEnd.Interfaces
         Task<IEnumerable<HabitacionGetDTO>> GetHabitaciones();
         Task<HabitacionGetDTO> GetHabitacion(int id);
         Task<int> CreateHabitacion(HabitacionInsertDTO habitacionDto);
-        Task UpdateHabitacion(int id, HabitacionUpdateDTO habitacionDto);
-        Task DeleteHabitacion(int id);
+        Task<bool> UpdateHabitacion(int id, HabitacionUpdateDTO habitacionDto);
+        Task<bool> DeleteHabitacion(int id);
     }
 }

@@ -7,7 +7,7 @@ namespace Sistema_de_Gestion_de_Hospitales.FrontEnd.Interfaces
         Task<IEnumerable<CitaGetDTO>> GetCitas();
         Task<CitaGetDTO> GetCita(int id);
         Task<int> CreateCita(CitaInsertDTO citaDto);
-        Task UpdateCita(int id, CitaUpdateDTO citaDto);
-        Task DeleteCita(int id);
+        Task<bool> UpdateCita(int id, CitaUpdateDTO citaDto);
+        Task<bool> DeleteCita(int id);
     }
 }

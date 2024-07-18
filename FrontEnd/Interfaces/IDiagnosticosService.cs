@@ -7,7 +7,7 @@ namespace Sistema_de_Gestion_de_Hospitales.FrontEnd.Interfaces
         Task<IEnumerable<DiagnosticoGetDTO>> GetDiagnosticos();
         Task<DiagnosticoGetDTO> GetDiagnostico(int id);
         Task<int> CreateDiagnostico(DiagnosticoInsertDTO diagnosticoDto);
-        Task UpdateDiagnostico(int id, DiagnosticoUpdateDTO diagnosticoDto);
-        Task DeleteDiagnostico(int id);
+        Task<bool> UpdateDiagnostico(int id, DiagnosticoUpdateDTO diagnosticoDto);
+        Task<bool> DeleteDiagnostico(int id);
     }
 }

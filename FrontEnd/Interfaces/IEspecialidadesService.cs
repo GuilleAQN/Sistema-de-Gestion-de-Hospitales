@@ -7,7 +7,7 @@ namespace Sistema_de_Gestion_de_Hospitales.FrontEnd.Interfaces
         Task<IEnumerable<EspecialidadGetDTO>> GetEspecialidades();
         Task<EspecialidadGetDTO> GetEspecialidad(int id);
         Task<int> CreateEspecialidad(EspecialidadInsertDTO especialidadDto);
-        Task UpdateEspecialidad(int id, EspecialidadUpdateDTO especialidadDto);
-        Task DeleteEspecialidad(int id);
+        Task<bool> UpdateEspecialidad(int id, EspecialidadUpdateDTO especialidadDto);
+        Task<bool> DeleteEspecialidad(int id);
     }
 }

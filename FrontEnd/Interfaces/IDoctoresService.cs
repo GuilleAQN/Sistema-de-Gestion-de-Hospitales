@@ -7,7 +7,7 @@ namespace Sistema_de_Gestion_de_Hospitales.FrontEnd.Interfaces
         Task<IEnumerable<DoctorGetDTO>> GetDoctores();
         Task<DoctorGetDTO> GetDoctor(int id);
         Task<int> CreateDoctor(DoctorInsertDTO doctorDto);
-        Task UpdateDoctor(int id, DoctorUpdateDTO doctorDto);
-        Task DeleteDoctor(int id);
+        Task<bool> UpdateDoctor(int id, DoctorUpdateDTO doctorDto);
+        Task<bool> DeleteDoctor(int id);
     }
 }

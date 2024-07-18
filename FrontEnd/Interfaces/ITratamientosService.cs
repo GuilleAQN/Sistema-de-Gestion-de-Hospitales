@@ -7,7 +7,7 @@ namespace Sistema_de_Gestion_de_Hospitales.FrontEnd.Interfaces
         Task<IEnumerable<TratamientoGetDTO>> GetTratamientos();
         Task<TratamientoGetDTO> GetTratamiento(int id);
         Task<int> CreateTratamiento(TratamientoInsertDTO tratamientoDto);
-        Task UpdateTratamiento(int id, TratamientoUpdateDTO tratamientoDto);
-        Task DeleteTratamiento(int id);
+        Task<bool> UpdateTratamiento(int id, TratamientoUpdateDTO tratamientoDto);
+        Task<bool> DeleteTratamiento(int id);
     }
 }
