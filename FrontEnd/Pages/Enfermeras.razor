@@ -1,0 +1,145 @@
+﻿@page "/enfermeras"
+
+@using Sistema_de_Gestion_de_Hospitales.FrontEnd.Interfaces
+@using Sistema_de_Gestion_de_Hospitales.Shared
+@using MudBlazor
+
+@inject IEnfermerasService EnfermerasService
+@inject NavigationManager NavigationManager
+@inject IDialogService DialogService
+
+<PageTitle>Enfermeras</PageTitle>
+<MudText Typo="Typo.h6" GutterBottom="true">Enfermeras</MudText>
+
+<MudContainer MaxWidth="MaxWidth.Large" Style="margin-top: 20px;">
+    <MudPaper>
+        @if (_isLoading)
+        {
+            <MudProgressLinear Color="Color.Primary" Indeterminate="true" />
+        }
+        else if (enfermeras != null && enfermeras.Any())
+        {
+            <MudGrid Container="true" Justify="Justify.SpaceBetween" Class="ml-2" Spacing="3">
+                <MudItem xs="8">
+                    <MudButton Class="mb-4" Variant="Variant.Filled" DropShadow="false" Color="Color.Primary" @onclick="AbrirFormularioInsercion">Agregar Nueva Enfermera</MudButton>
+                </MudItem>
+            </MudGrid>
+            <MudDataGrid T="EnfermeraGetDTO" MultiSelection="true" Items="@enfermeras" Hover="true" Dense="true" Filterable="true" Sortable="true">
+                <Columns>
+                    <SelectColumn T="EnfermeraGetDTO" Hidden />
+                    <PropertyColumn Property="x => x.IdEnfermera" Title="ID" />
+                    <PropertyColumn Property="x => x.Cedula" Title="Cedula" />
+                    <PropertyColumn Property="x => x.NombreCompleto" Title="Nombre" />
+                    <PropertyColumn Property="x => x.FechaContratacion" Title="Fecha de Contratación" />
+                    <PropertyColumn Property="x => x.NombreDepartamento" Title="Departamento" />
+                    <TemplateColumn>
+                        <CellTemplate>
+                            <MudStack Row>
+                                <MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Secondary" Size="Size.Medium" @onclick="() => EditEnfermera(context.Item)"></MudIconButton>
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error" Size="Size.Medium" @onclick="() => DeleteEnfermera(context.Item)"></MudIconButton>
+                            </MudStack>
+                        </CellTemplate>
+                    </TemplateColumn>
+                </Columns>
+                <PagerContent>
+                    <MudDataGridPager T="EnfermeraGetDTO" PageSizeOptions="[5,10,15]" />
+                </PagerContent>
+            </MudDataGrid>
+            <style>
+                .dialog-show {
+                    backdrop-filter: blur(10px);
+                }
+            </style>
+        }
+        else
+        {
+            <MudGrid Container="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Spacing="2">
+                <MudItem>
+                    <MudText Typo="Typo.subtitle1" Align="Align.Center">No se encontro ningún resultado.</MudText>
+                    <MudButton Class="mb-4" Variant="Variant.Filled" DropShadow="false" Color="Color.Primary" @onclick="AbrirFormularioInsercion">Agregar Nueva Enfermera</MudButton>
+                </MudItem>
+            </MudGrid>
+        }
+    </MudPaper>
+</MudContainer>
+
+@code {
+    private IEnumerable<EnfermeraGetDTO>? enfermeras = null;
+    private bool _isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarEnfermeras();
+    }
+
+    private async Task CargarEnfermeras()
+    {
+        try
+        {
+            enfermeras = await EnfermerasService.GetEnfermeras();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al cargar las enfermeras: {ex.Message}");
+        }
+        finally
+        {
+            _isLoading = false;
+            await InvokeAsync(StateHasChanged); 
+        }
+    }
+
+    private async Task AbrirFormularioInsercion()
+    {   
+        var parameters = new DialogParameters { { "Model", new EnfermeraInsertDTO() } };
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true, BackgroundClass = "dialog-show" };
+        parameters.Add("OnClose", EventCallback.Factory.Create(this, OnDialogClose));
+
+        var result = await DialogService.ShowAsync<InsertEnfermera>("Nuevo Enfermera", parameters, options);
+        if (await result.Result == DialogResult.Ok(true))
+        {
+            OnDialogClose();
+        }
+    }
+
+    private async Task EditEnfermera(EnfermeraGetDTO enfermera)
+    {
+        var parameters = new DialogParameters { { "Model", enfermera } };
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true, BackgroundClass = "dialog-show" };
+        parameters.Add("OnClose", EventCallback.Factory.Create(this, OnDialogClose));
+
+        var dialog = await DialogService.ShowAsync<UpdateEnfermera>("Actualizar Enfermera", parameters, options);
+        var result = dialog.Result;
+
+        if (!result.IsCanceled)
+        {
+            OnDialogClose();
+        }
+    }
+
+    private async Task DeleteEnfermera(EnfermeraGetDTO enfermera)
+    {
+        bool? confirmed = await DialogService.ShowMessageBox(
+            "Confirmar",
+            $"¿Estás seguro de que deseas eliminar a {enfermera.NombreCompleto}?",
+            yesText: "Eliminar", cancelText: "Cancelar");
+
+        if (confirmed == true)
+        {
+            var success = await EnfermerasService.DeleteEnfermera(enfermera.IdEnfermera);
+            if (success)
+            {
+                OnDialogClose();
+            }
+            else
+            {
+                await DialogService.ShowMessageBox("Error", "No se pudo eliminar la enfermera.");
+            }
+        }
+    }
+
+    private async void OnDialogClose()
+    {
+        await CargarEnfermeras();
+    }
+}

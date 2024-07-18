@@ -1,0 +1,145 @@
+﻿@page "/pacientes"
+
+@using Sistema_de_Gestion_de_Hospitales.FrontEnd.Interfaces
+@using Sistema_de_Gestion_de_Hospitales.Shared
+@using MudBlazor
+
+@inject IPacientesService PacientesService
+@inject NavigationManager NavigationManager
+@inject IDialogService DialogService
+
+<PageTitle>Pacientes</PageTitle>
+<MudText Typo="Typo.h6" GutterBottom="true">Pacientes</MudText>
+
+<MudContainer MaxWidth="MaxWidth.Large" Style="margin-top: 20px;">
+    <MudPaper>
+        @if (_isLoading)
+        {
+            <MudProgressLinear Color="Color.Primary" Indeterminate="true" />
+        }
+        else if (pacientes != null && pacientes.Any())
+        {
+            <MudGrid Container="true" Justify="Justify.SpaceBetween" Class="ml-2" Spacing="3">
+                <MudItem xs="8">
+                    <MudButton Class="mb-4" Variant="Variant.Filled" DropShadow="false" Color="Color.Primary" @onclick="AbrirFormularioInsercion">Agregar Nuevo Paciente</MudButton>
+                </MudItem>
+            </MudGrid>
+            <MudDataGrid T="PacienteGetDTO" MultiSelection="true" Items="@pacientes" Hover="true" Dense="true" Filterable="true" Sortable="true">
+                <Columns>
+                    <SelectColumn T="PacienteGetDTO" Hidden />
+                    <PropertyColumn Property="x => x.IdPaciente" Title="ID" />
+                    <PropertyColumn Property="x => x.Cedula" Title="Cedula" />
+                    <PropertyColumn Property="x => x.NombreCompleto" Title="Nombre" />
+                    <PropertyColumn Property="x => x.Telefono" Title="Teléfono" />
+                    <PropertyColumn Property="x => x.FechaNacimiento" Title="Fecha de Nacimiento" />
+                    <TemplateColumn>
+                        <CellTemplate>
+                            <MudStack Row>
+                                <MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Secondary" Size="Size.Medium" @onclick="() => EditPaciente(context.Item)"></MudIconButton>
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error" Size="Size.Medium" @onclick="() => DeletePaciente(context.Item)"></MudIconButton>
+                            </MudStack>
+                        </CellTemplate>
+                    </TemplateColumn>
+                </Columns>
+                <PagerContent>
+                    <MudDataGridPager T="PacienteGetDTO" PageSizeOptions="[5,10,15]" />
+                </PagerContent>
+            </MudDataGrid>
+            <style>
+                .dialog-show {
+                    backdrop-filter: blur(10px);
+                }
+            </style>
+        }
+        else
+        {
+            <MudGrid Container="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Spacing="2">
+                <MudItem>
+                    <MudText Typo="Typo.subtitle1" Align="Align.Center">No se encontro ningún resultado.</MudText>
+                    <MudButton Class="mb-4" Variant="Variant.Filled" DropShadow="false" Color="Color.Primary" @onclick="AbrirFormularioInsercion">Agregar Nuevo Paciente</MudButton>
+                </MudItem>
+            </MudGrid>
+        }
+    </MudPaper>
+</MudContainer>
+
+@code {
+    private IEnumerable<PacienteGetDTO>? pacientes = null;
+    private bool _isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarPacientes();
+    }
+
+    private async Task CargarPacientes()
+    {
+        try
+        {
+            pacientes = await PacientesService.GetPacientes();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al cargar los pacientes: {ex.Message}");
+        }
+        finally
+        {
+            _isLoading = false;
+            await InvokeAsync(StateHasChanged); 
+        }
+    }
+
+    private async Task AbrirFormularioInsercion()
+    {   
+        var parameters = new DialogParameters { { "Model", new PacienteInsertDTO() } };
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true, BackgroundClass = "dialog-show" };
+        parameters.Add("OnClose", EventCallback.Factory.Create(this, OnDialogClose));
+
+        var result = await DialogService.ShowAsync<InsertPaciente>("Nuevo Paciente", parameters, options);
+        if (await result.Result == DialogResult.Ok(true))
+        {
+            OnDialogClose();
+        }
+    }
+
+    private async Task EditPaciente(PacienteGetDTO paciente)
+    {
+        var parameters = new DialogParameters { { "Model", paciente } };
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true, BackgroundClass = "dialog-show" };
+        parameters.Add("OnClose", EventCallback.Factory.Create(this, OnDialogClose));
+
+        var dialog = await DialogService.ShowAsync<UpdatePaciente>("Actualizar Paciente", parameters, options);
+        var result = dialog.Result;
+
+        if (!result.IsCanceled)
+        {
+            OnDialogClose();
+        }
+    }
+
+    private async Task DeletePaciente(PacienteGetDTO paciente)
+    {
+        bool? confirmed = await DialogService.ShowMessageBox(
+            "Confirmar",
+            $"¿Estás seguro de que deseas eliminar a {paciente.NombreCompleto}?",
+            yesText: "Eliminar", cancelText: "Cancelar");
+
+        if (confirmed == true)
+        {
+            var success = await PacientesService.DeletePaciente(paciente.IdPaciente);
+            if (success)
+            {
+                OnDialogClose();
+            }
+            else
+            {
+                await DialogService.ShowMessageBox("Error", "No se pudo eliminar el paciente.");
+            }
+        }
+    }
+
+    private async void OnDialogClose()
+    {
+        await CargarPacientes();
+    }
+}

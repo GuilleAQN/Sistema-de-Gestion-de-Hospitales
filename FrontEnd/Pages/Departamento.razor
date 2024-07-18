@@ -1,0 +1,143 @@
+﻿@page "/departamentos"
+
+@using Sistema_de_Gestion_de_Hospitales.FrontEnd.Interfaces
+@using Sistema_de_Gestion_de_Hospitales.Shared
+@using MudBlazor
+
+@inject IDepartamentosService DepartamentosService
+@inject NavigationManager NavigationManager
+@inject IDialogService DialogService
+
+<PageTitle>Departamentos</PageTitle>
+<MudText Typo="Typo.h6" GutterBottom="true">Departamentos</MudText>
+
+<MudContainer MaxWidth="MaxWidth.Large" Style="margin-top: 20px;">
+    <MudPaper>
+        @if (_isLoading)
+        {
+            <MudProgressLinear Color="Color.Primary" Indeterminate="true" />
+        }
+        else if (departamentos != null && departamentos.Any())
+        {
+            <MudGrid Container="true" Justify="Justify.SpaceBetween" Class="ml-2" Spacing="3">
+                <MudItem xs="8">
+                    <MudButton Class="mb-4" Variant="Variant.Filled" DropShadow="false" Color="Color.Primary" @onclick="AbrirFormularioInsercion">Agregar Nuevo Departamento</MudButton>
+                </MudItem>
+            </MudGrid>
+            <MudDataGrid T="DepartamentoGetDTO" MultiSelection="true" Items="@departamentos" Hover="true" Dense="true" Filterable="true" Sortable="true">
+                <Columns>
+                    <SelectColumn T="DepartamentoGetDTO" Hidden />
+                    <PropertyColumn Property="x => x.IdDepartamento" Title="ID" />
+                    <PropertyColumn Property="x => x.Nombre" Title="Fecha" />
+                    <PropertyColumn Property="x => x.Ubicación" Title="Ubicacion" />
+                    <TemplateColumn>
+                        <CellTemplate>
+                            <MudStack Row>
+                                <MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Secondary" Size="Size.Medium" @onclick="() => EditDepartamento(context.Item)"></MudIconButton>
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error" Size="Size.Medium" @onclick="() => DeleteDepartamento(context.Item)"></MudIconButton>
+                            </MudStack>
+                        </CellTemplate>
+                    </TemplateColumn>
+                </Columns>
+                <PagerContent>
+                    <MudDataGridPager T="DepartamentoGetDTO" PageSizeOptions="[5,10,15]" />
+                </PagerContent>
+            </MudDataGrid>
+            <style>
+                .dialog-show {
+                    backdrop-filter: blur(10px);
+                }
+            </style>
+        }
+        else
+        {
+            <MudGrid Container="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Class="ml-2" Spacing="3">
+                <MudItem>
+                    <MudText Typo="Typo.subtitle1" Align="Align.Center">No se encontro ningún resultado.</MudText>
+                    <MudButton Class="mb-4" Variant="Variant.Filled" DropShadow="false" Color="Color.Primary" @onclick="AbrirFormularioInsercion">Agregar Nuevo Departamento</MudButton>
+                </MudItem>
+            </MudGrid>
+        }
+    </MudPaper>
+</MudContainer>
+
+@code {
+    private IEnumerable<DepartamentoGetDTO>? departamentos = null;
+    private bool _isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarDepartamentos();
+    }
+
+    private async Task CargarDepartamentos()
+    {
+        try
+        {
+            departamentos = await DepartamentosService.GetDepartamentos();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al cargar los departamentos: {ex.Message}");
+        }
+        finally
+        {
+            _isLoading = false;
+            await InvokeAsync(StateHasChanged); 
+        }
+    }
+
+    private async Task AbrirFormularioInsercion()
+    {   
+        var parameters = new DialogParameters { { "Model", new DepartamentoInsertDTO() } };
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true, BackgroundClass = "dialog-show" };
+        parameters.Add("OnClose", EventCallback.Factory.Create(this, OnDialogClose));
+
+        var result = await DialogService.ShowAsync<InsertDepartamento>("Nueva Departamento", parameters, options);
+        if (await result.Result == DialogResult.Ok(true))
+        {
+            OnDialogClose();
+        }
+    }
+
+    private async Task EditDepartamento(DepartamentoGetDTO departamento)
+    {
+        var parameters = new DialogParameters { { "Model", departamento} };
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true, BackgroundClass = "dialog-show" };
+        parameters.Add("OnClose", EventCallback.Factory.Create(this, OnDialogClose));
+
+        var dialog = await DialogService.ShowAsync<UpdateDepartamento>("Actualizar Departamento", parameters, options);
+        var result = dialog.Result;
+
+        if (!result.IsCanceled)
+        {
+            OnDialogClose();
+        }
+    }
+
+    private async Task DeleteDepartamento(DepartamentoGetDTO departamento)
+    {
+        bool? confirmed = await DialogService.ShowMessageBox(
+            "Confirmar",
+            $"¿Estás seguro de que deseas eliminar el departamento de ID {departamento.IdDepartamento}?",
+            yesText: "Eliminar", cancelText: "Cancelar");
+
+        if (confirmed == true)
+        {
+            var success = await DepartamentosService.DeleteDepartamento(departamento.IdDepartamento);
+            if (success)
+            {
+                OnDialogClose();
+            }
+            else
+            {
+                await DialogService.ShowMessageBox("Error", "No se pudo eliminar el departamento.");
+            }
+        }
+    }
+
+    private async void OnDialogClose()
+    {
+        await CargarDepartamentos();
+    }
+}

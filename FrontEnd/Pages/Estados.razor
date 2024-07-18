@@ -1,15 +1,15 @@
-﻿@page "/categorias-citas"
+﻿@page "/estados"
 
 @using Sistema_de_Gestion_de_Hospitales.FrontEnd.Interfaces
 @using Sistema_de_Gestion_de_Hospitales.Shared
 @using MudBlazor
 
-@inject ICategoriasCitasService CategoriasCitasService
+@inject IEstadosService EstadosService
 @inject NavigationManager NavigationManager
 @inject IDialogService DialogService
 
-<PageTitle>Categoria de Citas</PageTitle>
-<MudText Typo="Typo.h6" GutterBottom="true">Categorías de Citas</MudText>
+<PageTitle>Estados</PageTitle>
+<MudText Typo="Typo.h6" GutterBottom="true">Estados</MudText>
 
 <MudContainer MaxWidth="MaxWidth.Large" Style="margin-top: 20px;">
     <MudPaper>
@@ -17,29 +17,29 @@
         {
             <MudProgressLinear Color="Color.Primary" Indeterminate="true" />
         }
-        else if (categoriasCitas != null && categoriasCitas.Any())
+        else if (estados != null && estados .Any())
         {
             <MudGrid Container="true" Justify="Justify.SpaceBetween" Class="ml-2" Spacing="3">
                 <MudItem xs="8">
-                    <MudButton Class="mb-4" Variant="Variant.Filled" DropShadow="false" Color="Color.Primary" @onclick="AbrirFormularioInsercion">Agregar Nueva Categoría</MudButton>
+                    <MudButton Class="mb-4" Variant="Variant.Filled" DropShadow="false" Color="Color.Primary" @onclick="AbrirFormularioInsercion">Agregar Nuevo Estado</MudButton>
                 </MudItem>
             </MudGrid>
-            <MudDataGrid T="CategoriaCitaGetDTO" MultiSelection="true" Items="@categoriasCitas" Hover="true" Dense="true" Filterable="true" Sortable="true">
+            <MudDataGrid T="EstadoGetDTO" MultiSelection="true" Items="@estados" Hover="true" Dense="true" Filterable="true" Sortable="true">
                 <Columns>
-                    <SelectColumn T="CategoriaCitaGetDTO" Hidden />
-                    <PropertyColumn Property="x => x.IdCategoriaCita" Title="ID" />
+                    <SelectColumn T="EstadoGetDTO" Hidden />
+                    <PropertyColumn Property="x => x.IdEstado" Title="ID" />
                     <PropertyColumn Property="x => x.Nombre" Title="Nombre" />
                     <TemplateColumn>
                         <CellTemplate>
                             <MudStack Row>
-                                <MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Secondary" Size="Size.Medium" @onclick="() => EditCategoriaCita(context.Item)"></MudIconButton>
-                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error" Size="Size.Medium" @onclick="() => DeleteCategoriaCita(context.Item)"></MudIconButton>
+                                <MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Secondary" Size="Size.Medium" @onclick="() => EditEstado(context.Item)"></MudIconButton>
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error" Size="Size.Medium" @onclick="() => DeleteEstado(context.Item)"></MudIconButton>
                             </MudStack>
                         </CellTemplate>
                     </TemplateColumn>
                 </Columns>
                 <PagerContent>
-                    <MudDataGridPager T="CategoriaCitaGetDTO" PageSizeOptions="[5,10,15]" />
+                    <MudDataGridPager T="EstadoGetDTO" PageSizeOptions="[5,10,15]" />
                 </PagerContent>
             </MudDataGrid>
             <style>
@@ -50,10 +50,10 @@
         }
         else
         {
-                <MudGrid Container="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Class="ml-2" Spacing="3">
+            <MudGrid Container="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Spacing="2">
                 <MudItem>
                     <MudText Typo="Typo.subtitle1" Align="Align.Center">No se encontro ningún resultado.</MudText>
-                    <MudButton Class="mb-4" Variant="Variant.Filled" DropShadow="false" Color="Color.Primary" @onclick="AbrirFormularioInsercion">Agregar Nueva Categoría</MudButton>
+                    <MudButton Class="mb-4" Variant="Variant.Filled" DropShadow="false" Color="Color.Primary" @onclick="AbrirFormularioInsercion">Agregar Nuevo Estado</MudButton>
                 </MudItem>
             </MudGrid>
         }
@@ -61,23 +61,23 @@
 </MudContainer>
 
 @code {
-    private IEnumerable<CategoriaCitaGetDTO>? categoriasCitas = null;
+    private IEnumerable<EstadoGetDTO>? estados  = null;
     private bool _isLoading = true;
 
     protected override async Task OnInitializedAsync()
     {
-        await CargarCategorias();
+        await CargarEstados();
     }
 
-    private async Task CargarCategorias()
+    private async Task CargarEstados()
     {
         try
         {
-            categoriasCitas = await CategoriasCitasService.GetCategoriasCitasAsync();
+            estados  = await EstadosService.GetEstados();
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error al cargar categorías: {ex.Message}");
+            Console.WriteLine($"Error al cargar los estados: {ex.Message}");
         }
         finally
         {
@@ -88,55 +88,55 @@
 
     private async Task AbrirFormularioInsercion()
     {   
-        var parameters = new DialogParameters { { "Model", new CategoriaCitaInsertDTO() } };
+        var parameters = new DialogParameters { { "Model", new EstadoInsertDTO() } };
         var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true, BackgroundClass = "dialog-show" };
         parameters.Add("OnClose", EventCallback.Factory.Create(this, OnDialogClose));
 
-        var result = await DialogService.ShowAsync<InsertCategoriaCita>("Nueva Categoría de Cita", parameters, options);
+        var result = await DialogService.ShowAsync<InsertEstado>("Nuevo Estado", parameters, options);
         if (await result.Result == DialogResult.Ok(true))
         {
             OnDialogClose();
         }
     }
 
-    private async Task EditCategoriaCita(CategoriaCitaGetDTO categoria)
+    private async Task EditEstado(EstadoGetDTO estado)
     {
-        var parameters = new DialogParameters { { "Model", categoria } };
+        var parameters = new DialogParameters { { "Model", estado } };
         var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true, BackgroundClass = "dialog-show" };
         parameters.Add("OnClose", EventCallback.Factory.Create(this, OnDialogClose));
 
-        var dialog = await DialogService.ShowAsync<UpdateCategoriaCita>("Actualizar Categoría Cita", parameters, options);
+        var dialog = await DialogService.ShowAsync<UpdateEstado>("Actualizar Estado", parameters, options);
         var result = dialog.Result;
 
         if (!result.IsCanceled)
         {
-            OnDialogClose();
+           OnDialogClose();
         }
     }
 
-    private async Task DeleteCategoriaCita(CategoriaCitaGetDTO categoria)
+    private async Task DeleteEstado(EstadoGetDTO estado)
     {
         bool? confirmed = await DialogService.ShowMessageBox(
             "Confirmar",
-            $"¿Estás seguro de que deseas eliminar la categoría {categoria.Nombre}?",
+            $"¿Estás seguro de que deseas eliminar el estado {estado.Nombre}?",
             yesText: "Eliminar", cancelText: "Cancelar");
 
         if (confirmed == true)
         {
-            var success = await CategoriasCitasService.DeleteCategoriasCitaAsync(categoria.IdCategoriaCita);
+            var success = await EstadosService.DeleteEstado(estado.IdEstado);
             if (success)
             {
                 OnDialogClose();
             }
             else
             {
-                await DialogService.ShowMessageBox("Error", "No se pudo eliminar la categoría.");
+                await DialogService.ShowMessageBox("Error", "No se pudo eliminar la estado.");
             }
         }
     }
 
     private async void OnDialogClose()
     {
-        await CargarCategorias();
+        await CargarEstados();
     }
 }

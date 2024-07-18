@@ -1,0 +1,146 @@
+﻿@page "/citas"
+
+@using Sistema_de_Gestion_de_Hospitales.FrontEnd.Interfaces
+@using Sistema_de_Gestion_de_Hospitales.Shared
+@using MudBlazor
+
+@inject ICitasService CitasService
+@inject NavigationManager NavigationManager
+@inject IDialogService DialogService
+
+<PageTitle>Citas</PageTitle>
+<MudText Typo="Typo.h6" GutterBottom="true">Citas</MudText>
+
+<MudContainer MaxWidth="MaxWidth.Large" Style="margin-top: 20px;">
+    <MudPaper>
+        @if (_isLoading)
+        {
+            <MudProgressLinear Color="Color.Primary" Indeterminate="true" />
+        }
+        else if (citas != null && citas.Any())
+        {
+            <MudGrid Container="true" Justify="Justify.SpaceBetween" Class="ml-2" Spacing="3">
+                <MudItem xs="8">
+                    <MudButton Class="mb-4" Variant="Variant.Filled" DropShadow="false" Color="Color.Primary" @onclick="AbrirFormularioInsercion">Agregar Nueva Cita</MudButton>
+                </MudItem>
+            </MudGrid>
+            <MudDataGrid T="CitaGetDTO" MultiSelection="true" Items="@citas" Hover="true" Dense="true" Filterable="true" Sortable="true">
+                <Columns>
+                    <SelectColumn T="CitaGetDTO" Hidden />
+                    <PropertyColumn Property="x => x.IdCita" Title="ID" />
+                    <PropertyColumn Property="x => x.Fecha" Title="Fecha" />
+                    <PropertyColumn Property="x => x.NombrePaciente" Title="Paciente" />
+                    <PropertyColumn Property="x => x.NombreDoctor" Title="Doctor" />
+                    <PropertyColumn Property="x => x.NombreEnfermera" Title="Enfermera" />
+                    <PropertyColumn Property="x => x.CategoriaCitaNombre " Title="Cita" />
+                    <TemplateColumn>
+                        <CellTemplate>
+                            <MudStack Row>
+                                <MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Secondary" Size="Size.Medium" @onclick="() => EditCita(context.Item)"></MudIconButton>
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error" Size="Size.Medium" @onclick="() => DeleteCita(context.Item)"></MudIconButton>
+                            </MudStack>
+                        </CellTemplate>
+                    </TemplateColumn>
+                </Columns>
+                <PagerContent>
+                    <MudDataGridPager T="CitaGetDTO" PageSizeOptions="[5,10,15]" />
+                </PagerContent>
+            </MudDataGrid>
+            <style>
+                .dialog-show {
+                    backdrop-filter: blur(10px);
+                }
+            </style>
+        }
+        else
+        {
+            <MudGrid Container="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Class="ml-2" Spacing="3">
+                <MudItem>
+                    <MudText Typo="Typo.subtitle1" Align="Align.Center">No se encontro ningún resultado.</MudText>
+                    <MudButton Class="mb-4" Variant="Variant.Filled" DropShadow="false" Color="Color.Primary" @onclick="AbrirFormularioInsercion">Agregar Nueva Cita</MudButton>
+                </MudItem>
+            </MudGrid>
+        }
+    </MudPaper>
+</MudContainer>
+
+@code {
+    private IEnumerable<CitaGetDTO>? citas = null;
+    private bool _isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargarCitas();
+    }
+
+    private async Task CargarCitas()
+    {
+        try
+        {
+            citas = await CitasService.GetCitas();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error al cargar las citas: {ex.Message}");
+        }
+        finally
+        {
+            _isLoading = false;
+            await InvokeAsync(StateHasChanged); 
+        }
+    }
+
+    private async Task AbrirFormularioInsercion()
+    {   
+        var parameters = new DialogParameters { { "Model", new CitaInsertDTO() } };
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true, BackgroundClass = "dialog-show" };
+        parameters.Add("OnClose", EventCallback.Factory.Create(this, OnDialogClose));
+
+        var result = await DialogService.ShowAsync<InsertCita>("Nueva Cita", parameters, options);
+        if (await result.Result == DialogResult.Ok(true))
+        {
+            OnDialogClose();
+        }
+    }
+
+    private async Task EditCita(CitaGetDTO cita)
+    {
+        var parameters = new DialogParameters { { "Model", cita} };
+        var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true, BackgroundClass = "dialog-show" };
+        parameters.Add("OnClose", EventCallback.Factory.Create(this, OnDialogClose));
+
+        var dialog = await DialogService.ShowAsync<UpdateCita>("Actualizar Cita", parameters, options);
+        var result = dialog.Result;
+
+        if (!result.IsCanceled)
+        {
+            OnDialogClose();
+        }
+    }
+
+    private async Task DeleteCita(CitaGetDTO cita)
+    {
+        bool? confirmed = await DialogService.ShowMessageBox(
+            "Confirmar",
+            $"¿Estás seguro de que deseas eliminar la cita de ID {cita.IdCita}?",
+            yesText: "Eliminar", cancelText: "Cancelar");
+
+        if (confirmed == true)
+        {
+            var success = await CitasService.DeleteCita(cita.IdCita);
+            if (success)
+            {
+                OnDialogClose();
+            }
+            else
+            {
+                await DialogService.ShowMessageBox("Error", "No se pudo eliminar la cita.");
+            }
+        }
+    }
+
+    private async void OnDialogClose()
+    {
+        await CargarCitas();
+    }
+}

@@ -1,15 +1,15 @@
-﻿@page "/categorias-citas"
+﻿@page "/especialidades"
 
 @using Sistema_de_Gestion_de_Hospitales.FrontEnd.Interfaces
 @using Sistema_de_Gestion_de_Hospitales.Shared
 @using MudBlazor
 
-@inject ICategoriasCitasService CategoriasCitasService
+@inject IEspecialidadesService EspecialidadesService
 @inject NavigationManager NavigationManager
 @inject IDialogService DialogService
 
-<PageTitle>Categoria de Citas</PageTitle>
-<MudText Typo="Typo.h6" GutterBottom="true">Categorías de Citas</MudText>
+<PageTitle>Especialidades</PageTitle>
+<MudText Typo="Typo.h6" GutterBottom="true">Especialidades</MudText>
 
 <MudContainer MaxWidth="MaxWidth.Large" Style="margin-top: 20px;">
     <MudPaper>
@@ -17,29 +17,30 @@
         {
             <MudProgressLinear Color="Color.Primary" Indeterminate="true" />
         }
-        else if (categoriasCitas != null && categoriasCitas.Any())
+        else if (especialidad != null && especialidad.Any())
         {
             <MudGrid Container="true" Justify="Justify.SpaceBetween" Class="ml-2" Spacing="3">
                 <MudItem xs="8">
-                    <MudButton Class="mb-4" Variant="Variant.Filled" DropShadow="false" Color="Color.Primary" @onclick="AbrirFormularioInsercion">Agregar Nueva Categoría</MudButton>
+                    <MudButton Class="mb-4" Variant="Variant.Filled" DropShadow="false" Color="Color.Primary" @onclick="AbrirFormularioInsercion">Agregar Nuevo Especialidad</MudButton>
                 </MudItem>
             </MudGrid>
-            <MudDataGrid T="CategoriaCitaGetDTO" MultiSelection="true" Items="@categoriasCitas" Hover="true" Dense="true" Filterable="true" Sortable="true">
+            <MudDataGrid T="EspecialidadGetDTO" MultiSelection="true" Items="@especialidad" Hover="true" Dense="true" Filterable="true" Sortable="true">
                 <Columns>
-                    <SelectColumn T="CategoriaCitaGetDTO" Hidden />
-                    <PropertyColumn Property="x => x.IdCategoriaCita" Title="ID" />
+                    <SelectColumn T="EspecialidadGetDTO" Hidden />
+                    <PropertyColumn Property="x => x.IdEspecialidad" Title="ID" />
                     <PropertyColumn Property="x => x.Nombre" Title="Nombre" />
+                    <PropertyColumn Property="x => x.Descripcion" Title="Descripcion" />
                     <TemplateColumn>
                         <CellTemplate>
                             <MudStack Row>
-                                <MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Secondary" Size="Size.Medium" @onclick="() => EditCategoriaCita(context.Item)"></MudIconButton>
-                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error" Size="Size.Medium" @onclick="() => DeleteCategoriaCita(context.Item)"></MudIconButton>
+                                <MudIconButton Icon="@Icons.Material.Filled.Edit" Variant="Variant.Filled" Color="Color.Secondary" Size="Size.Medium" @onclick="() => EditEspecialidad(context.Item)"></MudIconButton>
+                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Filled" Color="Color.Error" Size="Size.Medium" @onclick="() => DeleteEspecialidad(context.Item)"></MudIconButton>
                             </MudStack>
                         </CellTemplate>
                     </TemplateColumn>
                 </Columns>
                 <PagerContent>
-                    <MudDataGridPager T="CategoriaCitaGetDTO" PageSizeOptions="[5,10,15]" />
+                    <MudDataGridPager T="EspecialidadGetDTO" PageSizeOptions="[5,10,15]" />
                 </PagerContent>
             </MudDataGrid>
             <style>
@@ -50,10 +51,10 @@
         }
         else
         {
-                <MudGrid Container="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Class="ml-2" Spacing="3">
+            <MudGrid Container="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Spacing="2">
                 <MudItem>
                     <MudText Typo="Typo.subtitle1" Align="Align.Center">No se encontro ningún resultado.</MudText>
-                    <MudButton Class="mb-4" Variant="Variant.Filled" DropShadow="false" Color="Color.Primary" @onclick="AbrirFormularioInsercion">Agregar Nueva Categoría</MudButton>
+                    <MudButton Class="mb-4" Variant="Variant.Filled" DropShadow="false" Color="Color.Primary" @onclick="AbrirFormularioInsercion">Agregar Nuevo Especialidad</MudButton>
                 </MudItem>
             </MudGrid>
         }
@@ -61,23 +62,23 @@
 </MudContainer>
 
 @code {
-    private IEnumerable<CategoriaCitaGetDTO>? categoriasCitas = null;
+    private IEnumerable<EspecialidadGetDTO>? especialidad = null;
     private bool _isLoading = true;
 
     protected override async Task OnInitializedAsync()
     {
-        await CargarCategorias();
+        await CargarEspecialidades();
     }
 
-    private async Task CargarCategorias()
+    private async Task CargarEspecialidades()
     {
         try
         {
-            categoriasCitas = await CategoriasCitasService.GetCategoriasCitasAsync();
+            especialidad = await EspecialidadesService.GetEspecialidades();
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error al cargar categorías: {ex.Message}");
+            Console.WriteLine($"Error al cargar las especialidaes: {ex.Message}");
         }
         finally
         {
@@ -88,24 +89,24 @@
 
     private async Task AbrirFormularioInsercion()
     {   
-        var parameters = new DialogParameters { { "Model", new CategoriaCitaInsertDTO() } };
+        var parameters = new DialogParameters { { "Model", new EspecialidadInsertDTO() } };
         var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true, BackgroundClass = "dialog-show" };
         parameters.Add("OnClose", EventCallback.Factory.Create(this, OnDialogClose));
 
-        var result = await DialogService.ShowAsync<InsertCategoriaCita>("Nueva Categoría de Cita", parameters, options);
+        var result = await DialogService.ShowAsync<InsertEspecialidad>("Nuevo Especialidad", parameters, options);
         if (await result.Result == DialogResult.Ok(true))
         {
             OnDialogClose();
         }
     }
 
-    private async Task EditCategoriaCita(CategoriaCitaGetDTO categoria)
+    private async Task EditEspecialidad(EspecialidadGetDTO especialidad)
     {
-        var parameters = new DialogParameters { { "Model", categoria } };
+        var parameters = new DialogParameters { { "Model", especialidad } };
         var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true, BackgroundClass = "dialog-show" };
         parameters.Add("OnClose", EventCallback.Factory.Create(this, OnDialogClose));
 
-        var dialog = await DialogService.ShowAsync<UpdateCategoriaCita>("Actualizar Categoría Cita", parameters, options);
+        var dialog = await DialogService.ShowAsync<UpdateEspecialidad>("Actualizar Especialidad", parameters, options);
         var result = dialog.Result;
 
         if (!result.IsCanceled)
@@ -114,29 +115,29 @@
         }
     }
 
-    private async Task DeleteCategoriaCita(CategoriaCitaGetDTO categoria)
+    private async Task DeleteEspecialidad(EspecialidadGetDTO especialidad)
     {
         bool? confirmed = await DialogService.ShowMessageBox(
             "Confirmar",
-            $"¿Estás seguro de que deseas eliminar la categoría {categoria.Nombre}?",
+            $"¿Estás seguro de que deseas eliminar la especialidad {especialidad.Nombre}?",
             yesText: "Eliminar", cancelText: "Cancelar");
 
         if (confirmed == true)
         {
-            var success = await CategoriasCitasService.DeleteCategoriasCitaAsync(categoria.IdCategoriaCita);
+            var success = await EspecialidadesService.DeleteEspecialidad(especialidad.IdEspecialidad);
             if (success)
             {
                 OnDialogClose();
             }
             else
             {
-                await DialogService.ShowMessageBox("Error", "No se pudo eliminar la categoría.");
+                await DialogService.ShowMessageBox("Error", "No se pudo eliminar la especialidad.");
             }
         }
     }
 
     private async void OnDialogClose()
     {
-        await CargarCategorias();
+        await CargarEspecialidades();
     }
 }
