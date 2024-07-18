@@ -39,8 +39,5 @@ namespace Sistema_de_Gestion_de_Hospitales.Shared.Paciente
         [EmailAddress(ErrorMessage = "Favor introducir un email válido")]
         [MaxLength(60, ErrorMessage = "Correo Electrónico no puede ser mayor a 60 carácteres")]
         public string? CorreoElectronico { get; set; }
-
-        [Required(ErrorMessage = "Código del Departamento es requerido")]
-        public int IdDepartamento { get; set; }
     }
 }
