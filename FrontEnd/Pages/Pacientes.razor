@@ -9,7 +9,7 @@
 @inject IDialogService DialogService
 
 <PageTitle>Pacientes</PageTitle>
-<MudText Typo="Typo.h6" GutterBottom="true">Pacientes</MudText>
+<MudText Typo="Typo.h3" GutterBottom="true">Pacientes</MudText>
 
 <MudContainer MaxWidth="MaxWidth.Large" Style="margin-top: 20px;">
     <MudPaper>
@@ -31,7 +31,7 @@
                     <PropertyColumn Property="x => x.Cedula" Title="Cedula" />
                     <PropertyColumn Property="x => x.NombreCompleto" Title="Nombre" />
                     <PropertyColumn Property="x => x.Telefono" Title="Teléfono" />
-                    <PropertyColumn Property="x => x.FechaNacimiento" Title="Fecha de Nacimiento" />
+                    <PropertyColumn Property="x => x.FechaNacimiento.ToShortDateString()" Title="Fecha de Nacimiento" />
                     <TemplateColumn>
                         <CellTemplate>
                             <MudStack Row>
@@ -52,7 +52,7 @@
                             <MudText>Id: @context.Item.IdPaciente</MudText>
                             <MudText>Cédula: @context.Item.Cedula</MudText>
                             <MudText>Género: @context.Item.Genero</MudText>
-                            <MudText>Fecha de Nacimiento: @context.Item.FechaNacimiento</MudText>
+                            <MudText>Fecha de Nacimiento: @context.Item.FechaNacimiento.ToShortDateString()</MudText>
                             <MudText>Teléfono: @context.Item.Telefono</MudText>
                             <MudText>Correo Electrónico: @context.Item.CorreoElectronico</MudText>
                             <MudText>Dirreción: @context.Item.Direccion</MudText>

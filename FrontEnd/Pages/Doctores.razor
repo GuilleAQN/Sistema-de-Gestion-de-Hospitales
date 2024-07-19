@@ -9,7 +9,7 @@
 @inject IDialogService DialogService
 
 <PageTitle>Doctores</PageTitle>
-<MudText Typo="Typo.h6" GutterBottom="true">Doctores</MudText>
+<MudText Typo="Typo.h3" GutterBottom="true">Doctores</MudText>
 
 <MudContainer MaxWidth="MaxWidth.Large" Style="margin-top: 20px;">
     <MudPaper>
@@ -26,7 +26,7 @@
             </MudGrid>
             <MudDataGrid Items="@doctores" Hover="true" Dense="true" Filterable="true">
                 <Columns>
-                    <SelectColumn T="DoctorGetDTO" Hidden />
+                    <HierarchyColumn T="DoctorGetDTO" />
                     <PropertyColumn Property="x => x.IdDoctor" Title="ID" />
                     <PropertyColumn Property="x => x.NombreCompleto" Title="Nombre" />
                     <PropertyColumn Property="x => x.CorreoElectronico" Title="Correo Electrónico" />
@@ -51,9 +51,10 @@
                             <MudText>Cédula: @context.Item.Cedula</MudText>
                             <MudText>Teléfono: @context.Item.Telefono</MudText>
                             <MudText>Correo Electrónico: @context.Item.CorreoElectronico</MudText>
+                            <MudText>Direción: @context.Item.Direccion</MudText>
                             <MudText>Especialidad: @context.Item.NombreEspecialidad</MudText>
                             <MudText>Departamento: @context.Item.NombreDepartamento</MudText>
-                            <MudText>Direción: @context.Item.Direccion</MudText>
+                            <MudText>Fecha de Contratación: @context.Item.FechaContratacion.ToShortDateString()</MudText>
                         </MudCardContent>
                     </MudCard>
                 </ChildRowContent>

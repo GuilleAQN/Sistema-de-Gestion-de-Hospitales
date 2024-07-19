@@ -9,7 +9,7 @@
 @inject IDialogService DialogService
 
 <PageTitle>Tratamientos</PageTitle>
-<MudText Typo="Typo.h6" GutterBottom="true">Tratamientos</MudText>
+<MudText Typo="Typo.h3" GutterBottom="true">Tratamientos</MudText>
 
 <MudContainer MaxWidth="MaxWidth.Large" Style="margin-top: 20px;">
     <MudPaper>
@@ -29,8 +29,8 @@
                     <HierarchyColumn T="TratamientoGetDTO" />
                     <PropertyColumn Property="x => x.IdTratamiento" Title="ID" />
                     <PropertyColumn Property="x => x.NombreDoctor" Title="Doctor" />
-                    <PropertyColumn Property="x => x.FechaInicio" Title="Fecha de Inicio" />
-                    <PropertyColumn Property="x => x.FechaFin" Title="Fecha de Finalización" />
+                    <PropertyColumn Property="x => x.FechaInicio.ToShortDateString()" Title="Fecha de Inicio" />
+                    <PropertyColumn Property="x => x.FechaFin.ToShortDateString()" Title="Fecha de Finalización" />
                     <TemplateColumn>
                         <CellTemplate>
                             <MudStack Row>
@@ -51,8 +51,8 @@
                             <MudText>Doctor: @context.Item.NombreDoctor</MudText>
                             <MudText>Descripción: @context.Item.Descripcion</MudText>
                             <MudText>Diagnóstico: @context.Item.DescripcionDiagnostico</MudText>
-                            <MudText>Fecha de Inicio: @context.Item.FechaInicio</MudText>
-                            <MudText>Fecha de Finalización: @context.Item.FechaFin</MudText>
+                            <MudText>Fecha de Inicio: @context.Item.FechaInicio.ToShortDateString()</MudText>
+                            <MudText>Fecha de Finalización: @context.Item.FechaFin.ToShortDateString()</MudText>
                         </MudCardContent>
                     </MudCard>
                 </ChildRowContent>

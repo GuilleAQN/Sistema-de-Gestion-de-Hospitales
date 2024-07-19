@@ -9,7 +9,7 @@
 @inject IDialogService DialogService
 
 <PageTitle>Diagnosticos</PageTitle>
-<MudText Typo="Typo.h6" GutterBottom="true">Diagnosticos</MudText>
+<MudText Typo="Typo.h3" GutterBottom="true">Diagnosticos</MudText>
 
 <MudContainer MaxWidth="MaxWidth.Large" Style="margin-top: 20px;">
     <MudPaper>
@@ -48,7 +48,7 @@
                             </CardHeaderContent>
                         </MudCardHeader>
                         <MudCardContent>
-                            <MudText>Fecha: @context.Item.Fecha</MudText>
+                            <MudText>Fecha: @context.Item.Fecha.ToShortDateString()</MudText>
                             <MudText>Paciente: @context.Item.NombrePaciente</MudText>
                             <MudText>Doctor: @context.Item.NombreDoctor</MudText>
                             <MudText>Descripción: @context.Item.Descripcion</MudText>
