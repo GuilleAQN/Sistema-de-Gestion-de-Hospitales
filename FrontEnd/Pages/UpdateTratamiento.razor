@@ -1,0 +1,121 @@
+﻿@using Sistema_de_Gestion_de_Hospitales.FrontEnd.Interfaces
+@using System.ComponentModel.DataAnnotations
+@using Sistema_de_Gestion_de_Hospitales.Shared
+@using MudBlazor
+
+@inject ISnackbar Snackbar
+@inject ITratamientosService TratamientosService
+@inject IDoctoresService DoctoresService
+@inject IDiagnosticosService DiagnosticosService
+@inject IDialogService DialogService
+
+<PageTitle>Editando Tratamiento</PageTitle>
+
+<EditForm Model="@Model" OnValidSubmit="ActualizarTratamiento">
+    <MudDialog>
+        <DialogContent>
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <MudTextField T="string" Label="Descripción" AutoGrow Lines="3" @bind-Value="Model.Descripcion" Required="true" />
+            <MudDatePicker PickerVariant="PickerVariant.Dialog" @bind-Date="@fechaInicio" Label="Fecha de Inicio" Required="true" />
+            <MudDatePicker PickerVariant="PickerVariant.Dialog" @bind-Date="@fechaFin" Label="Fecha de Finalización" Required="true" />
+            <MudSelect T="int" Label="Diagnóstico" @bind-Value="@Model.IdDiagnostico" HelperText="@diagnosticosText" ToStringFunc="@((int id) => diagnosticos.FirstOrDefault(d => d.IdDiagnostico == id)?.Descripcion)">
+                @if (diagnosticos != null)
+
+                    @foreach (var diagnostico in diagnosticos)
+                    {
+                        <MudSelectItem T="int" Value="diagnostico.IdDiagnostico">@diagnostico.Descripcion</MudSelectItem>
+                    }
+                }
+            </MudSelect>
+            <MudSelect T="int" Label="Doctor" @bind-Value="@Model.IdDoctor" HelperText="@doctoresText" ToStringFunc="@((int id) => doctores.FirstOrDefault(d => d.IdDoctor == id)?.NombreCompleto)">
+                @if (doctores != null)
+                {
+                    @foreach (var doctor in doctores)
+                    {
+                        <MudSelectItem T="int" Value="doctor.IdDoctor">@doctor.NombreCompleto</MudSelectItem>
+                    }
+                }
+            </MudSelect>
+        </DialogContent>
+        <DialogActions>
+            <MudButton ButtonType="ButtonType.Submit" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Save">Crear</MudButton>
+            <MudButton Color="Color.Secondary" OnClick="Cancelar">Cancelar</MudButton>
+        </DialogActions>
+    </MudDialog>
+</EditForm>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public TratamientoGetDTO Model { get; set; }
+
+    [Parameter] 
+    public EventCallback OnClose { get; set; }
+
+    private DateTime? fechaInicio = DateTime.Now;
+    private DateTime? fechaFin = DateTime.Now;
+
+    private IEnumerable<DiagnosticoGetDTO> diagnosticos;
+    private IEnumerable<DoctorGetDTO> doctores;
+
+    private string doctoresText { get; set; } = "Cargando doctores...";
+    private string diagnosticosText { get; set; } = "Cargando diagnósticos...";
+
+    protected override async Task OnInitializedAsync()
+    {
+        fechaInicio = Model.FechaInicio.ToDateTime(TimeOnly.Parse("12:00 PM"));
+        fechaFin = Model.FechaFin.ToDateTime(TimeOnly.Parse("12:00 PM"));
+        diagnosticos = await CargarDiagnosticosAsync();
+        doctores = await CargarDoctoresAsync();
+        doctoresText = doctores.Any() ? string.Empty : "No se encontraron doctores.";
+        diagnosticosText = diagnosticos.Any() ? string.Empty : "No se encontraron diagnosticos.";
+    }
+
+    private async Task<IEnumerable<DiagnosticoGetDTO>> CargarDiagnosticosAsync()
+    {
+        return await DiagnosticosService.GetDiagnosticos();
+    }
+
+    private async Task<IEnumerable<DoctorGetDTO>> CargarDoctoresAsync()
+    {
+        return await DoctoresService.GetDoctores();
+    }
+
+    private async Task ActualizarTratamiento()
+    {
+        var dto = new TratamientoUpdateDTO();
+        Model.CopyPropertiesTo(dto);
+        dto.FechaInicio = DateOnly.FromDateTime(fechaInicio.Value);
+        dto.FechaFin = DateOnly.FromDateTime(fechaFin.Value);
+        try
+        {
+            var success = await TratamientosService.UpdateTratamiento(Model.IdTratamiento, dto);
+            if (success.IsSuccessStatusCode)
+            {
+                Snackbar.Add("Tratamiento actualizado exitosamente", Severity.Success);
+                await OnClose.InvokeAsync(null);
+                MudDialog.Close(DialogResult.Ok(true));
+            }
+            else
+            {
+                var problemDetails = await success.Content.ReadFromJsonAsync<ProblemDetailsFront>();
+                if (problemDetails != null)
+                {
+                    await DialogService.ShowMessageBox("Error", problemDetails.Detail ?? "Error al actualizar el tratamiento.");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private void Cancelar()
+    {
+        MudDialog.Cancel();
+    }
+}

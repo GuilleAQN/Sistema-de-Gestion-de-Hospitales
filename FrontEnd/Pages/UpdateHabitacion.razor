@@ -1,0 +1,95 @@
+﻿@using Sistema_de_Gestion_de_Hospitales.FrontEnd.Interfaces
+@using System.ComponentModel.DataAnnotations
+@using Sistema_de_Gestion_de_Hospitales.Shared
+@using MudBlazor
+
+@inject ISnackbar Snackbar
+@inject IHabitacionesService HabitacionesService
+@inject IEstadosService EstadosService
+@inject IDialogService DialogService
+
+<PageTitle>Editando Habitación</PageTitle>
+
+<EditForm Model="@Model" OnValidSubmit="ActualizarHabitacion">
+    <MudDialog>
+        <DialogContent>
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <MudTextField T="string" Label="Número" Mask="@(new PatternMask("00000"))" @bind-Value="Model.Numero" Required="true" />
+            <MudTextField T="int" Label="Piso" @bind-Value="Model.Piso" Required="true" InputType="InputType.Number" Min="1" Max="4" />
+            <MudTextField T="string" Label="Tipo" @bind-Value="Model.Tipo" Required="true" />
+            <MudSelect T="int" Label="Estado" @bind-Value="@Model.IdEstado" HelperText="@estadosText" ToStringFunc="@((int id) => estados.FirstOrDefault(d => d.IdEstado == id)?.Nombre)">
+                @if (estados != null)
+                {
+                    @foreach (var estado in estados)
+                    {
+                        <MudSelectItem T="int" Value="estado.IdEstado">@estado.Nombre</MudSelectItem>
+                    }
+                }
+            </MudSelect>
+        </DialogContent>
+        <DialogActions>
+            <MudButton ButtonType="ButtonType.Submit" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Save">Crear</MudButton>
+            <MudButton Color="Color.Secondary" OnClick="Cancelar">Cancelar</MudButton>
+        </DialogActions>
+    </MudDialog>
+</EditForm>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public HabitacionGetDTO Model { get; set; }
+
+    [Parameter] 
+    public EventCallback OnClose { get; set; }
+
+    private IEnumerable<EstadoGetDTO> estados;
+
+    private string estadosText { get; set; } = "Cargando estados...";
+
+    protected override async Task OnInitializedAsync()
+    {
+        estados = await CargarEstadosAsync();
+        estadosText = estados.Any() ? string.Empty : "No se encontraron estados.";
+    }
+
+    private async Task<IEnumerable<EstadoGetDTO>> CargarEstadosAsync()
+    {
+        return await EstadosService.GetEstados();
+    }
+
+    private async Task ActualizarHabitacion()
+    {
+        var dto = new HabitacionUpdateDTO();
+        Model.CopyPropertiesTo(dto);
+        try
+        {
+            var success = await HabitacionesService.UpdateHabitacion(Model.IdHabitacion, dto);
+            if (success.IsSuccessStatusCode)
+            {
+                Snackbar.Add("Habitación actualizada exitosamente", Severity.Success);
+                await OnClose.InvokeAsync(null);
+                MudDialog.Close(DialogResult.Ok(true));
+            }
+            else
+            {
+                var problemDetails = await success.Content.ReadFromJsonAsync<ProblemDetailsFront>();
+                if (problemDetails != null)
+                {
+                    await DialogService.ShowMessageBox("Error", problemDetails.Detail ?? "Error al actualizar la habitación.");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private void Cancelar()
+    {
+        MudDialog.Cancel();
+    }
+}

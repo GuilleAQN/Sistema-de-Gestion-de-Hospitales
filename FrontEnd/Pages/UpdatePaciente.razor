@@ -1,0 +1,85 @@
+﻿@using Sistema_de_Gestion_de_Hospitales.FrontEnd.Interfaces
+@using System.ComponentModel.DataAnnotations
+@using Sistema_de_Gestion_de_Hospitales.Shared
+@using MudBlazor
+
+@inject ISnackbar Snackbar
+@inject IPacientesService PacientesService
+@inject IDialogService DialogService
+
+<PageTitle>Editando Paciente</PageTitle>
+
+<EditForm Model="@Model" OnValidSubmit="ActualizarPaciente">
+    <MudDialog>
+        <DialogContent>
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <MudTextField T="string" Label="Nombre" @bind-Value="Model.NombreCompleto" Required="true" />
+            <MudSelect T="string" Label="Género" @bind-Value="Model.Genero">
+                <MudSelectItem T="string" Value="@("M")" />
+                <MudSelectItem T="string" Value="@("F")" />
+            </MudSelect>
+            <MudTextField T="string" Label="Cédula" Mask="@(new PatternMask("00000000000"))" @bind-Value="Model.Cedula" Required="true" />
+            <MudTextField T="string" Label="Teléfono" Mask="@(new PatternMask("0000000000"))" @bind-Value="Model.Telefono" Required="true" />
+            <MudTextField T="string" Label="Correo Electrónico" @bind-Value="Model.CorreoElectronico" Required="true" />
+            <MudDatePicker PickerVariant="PickerVariant.Dialog" @bind-Date="@fecha" Label="Fecha de Nacimiento" Required="true" />
+            <MudTextField T="string" Label="Dirección" AutoGrow Lines="3" @bind-Value="Model.Direccion" Required="true" />
+        </DialogContent>
+        <DialogActions>
+            <MudButton ButtonType="ButtonType.Submit" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Save">Crear</MudButton>
+            <MudButton Color="Color.Secondary" OnClick="Cancelar">Cancelar</MudButton>
+        </DialogActions>
+    </MudDialog>
+</EditForm>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public PacienteGetDTO Model { get; set; }
+
+    [Parameter] 
+    public EventCallback OnClose { get; set; }
+
+    private DateTime? fecha = DateTime.Now;
+
+    protected override async Task OnInitializedAsync()
+    {
+        fecha = Model.FechaNacimiento.ToDateTime(TimeOnly.Parse("12:00 PM"));
+    }
+
+    private async Task ActualizarPaciente()
+    {
+        var dto = new PacienteUpdateDTO();
+        Model.CopyPropertiesTo(dto);
+        dto.FechaNacimiento = DateOnly.FromDateTime(fecha.Value);
+        try
+        {
+            var success = await PacientesService.UpdatePaciente(Model.IdPaciente, dto);
+            if (success.IsSuccessStatusCode)
+            {
+                Snackbar.Add("Paciente actualizado exitosamente", Severity.Success);
+                await OnClose.InvokeAsync(null);
+                MudDialog.Close(DialogResult.Ok(true));
+            }
+            else
+            {
+                var problemDetails = await success.Content.ReadFromJsonAsync<ProblemDetailsFront>();
+                if (problemDetails != null)
+                {
+                    await DialogService.ShowMessageBox("Error", problemDetails.Detail ?? "Error al actualizar el paciente.");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private void Cancelar()
+    {
+        MudDialog.Cancel();
+    }
+}

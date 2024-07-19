@@ -1,65 +1,66 @@
-﻿@page "/categorias-citas/editar"
-
-@using Sistema_de_Gestion_de_Hospitales.FrontEnd.Interfaces
+﻿@using Sistema_de_Gestion_de_Hospitales.FrontEnd.Interfaces
+@using System.ComponentModel.DataAnnotations
 @using Sistema_de_Gestion_de_Hospitales.Shared.CategoriasCita
+@using Sistema_de_Gestion_de_Hospitales.Shared
 @using MudBlazor
 
 @inject ISnackbar Snackbar
+@inject IDialogService DialogService
 @inject ICategoriasCitasService CategoriasCitasService
+
+<PageTitle>Editando Categoria</PageTitle>
 
 <EditForm Model="@Model" OnValidSubmit="ActualizarCategoria">
 <MudDialog>
     <DialogContent>
-            <MudTextField T="string" Label="Nombre" @bind-Value="Model.Nombre" Required="true" />
-            <MudTextField T="string" Label="Descripcion" AutoGrow Lines="5" @bind-Value="Model.Descripcion" Required="true" />
+        <DataAnnotationsValidator />
+        <MudTextField T="string" Label="Nombre" @bind-Value="Model.Nombre" Required="true" />
+        <MudTextField T="string" Label="Descripcion" AutoGrow Lines="5" @bind-Value="Model.Descripcion" Required="true" />
     </DialogContent>
     <DialogActions>
-            <MudButton ButtonType="ButtonType.Submit" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Save" OnClick="ActualizarCategoria">Actualizar</MudButton>
+            <MudButton ButtonType="ButtonType.Submit" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Save">Actualizar</MudButton>
         <MudButton Color="Color.Secondary" OnClick="Cancelar">Cancelar</MudButton>
     </DialogActions>
 </MudDialog>
 </EditForm>
 
 @code {
-    [CascadingParameter] MudDialogInstance MudDialog { get; set; }
-    [Parameter] public CategoriaCitaGetDTO Model { get; set; }
+    [CascadingParameter] 
+    MudDialogInstance MudDialog { get; set; }
 
-    private MudForm form;
+    [Parameter] 
+    public CategoriaCitaGetDTO Model { get; set; }
+
+    [Parameter] 
+    public EventCallback OnClose { get; set; }
+
 
     private async Task ActualizarCategoria()
     {
-        var dto = new CategoriaCitaUpdateDTO
-            {
-                IdCategoriaCita = Model.IdCategoriaCita,
-                Nombre = Model.Nombre,
-                Descripcion = Model.Descripcion
-            };
-
-        await form.Validate();
-        if (form.IsValid)
+        var dto = new CategoriaCitaUpdateDTO();
+        Model.CopyPropertiesTo(dto);
+        try
         {
-            try
+            var success = await CategoriasCitasService.UpdateCategoriasCitaAsync(Model.IdCategoriaCita, dto);
+            if (success.IsSuccessStatusCode)
             {
-                var success = await CategoriasCitasService.UpdateCategoriasCitaAsync(Model.IdCategoriaCita, dto);
-                if (success)
+                Snackbar.Add("Cita actualizada exitosamente", Severity.Success);
+                await OnClose.InvokeAsync(null);
+                MudDialog.Close(DialogResult.Ok(true));
+            }
+            else
+            {
+                var problemDetails = await success.Content.ReadFromJsonAsync<ProblemDetailsFront>();
+                if (problemDetails != null)
                 {
-                    await InvokeAsync(StateHasChanged);
-                    Snackbar.Add("Cita actualizada exitosamente", Severity.Success);
-                    MudDialog.Close(DialogResult.Ok(true));
-                }
-                else
-                {
-                    Snackbar.Add("Error al actualizar la cita", Severity.Error);
+                    await DialogService.ShowMessageBox("Error", problemDetails.Detail ?? "Error al actualizar la categoria");
                 }
             }
-            catch (Exception ex)
-            {
-                Snackbar.Add($"Error: {ex.Message}", Severity.Error);
-            }
+          
         }
-        else
+        catch (Exception ex)
         {
-            Snackbar.Add("Por favor, complete todos los campos requeridos", Severity.Warning);
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
         }
     }
 

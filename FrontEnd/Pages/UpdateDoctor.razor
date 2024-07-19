@@ -1,0 +1,121 @@
+﻿@using Sistema_de_Gestion_de_Hospitales.FrontEnd.Interfaces
+@using System.ComponentModel.DataAnnotations
+@using Sistema_de_Gestion_de_Hospitales.Shared
+@using MudBlazor
+
+@inject ISnackbar Snackbar
+@inject IDoctoresService DoctoresService
+@inject IEspecialidadesService EspecialidadesService
+@inject IDepartamentosService DepartamentosService
+@inject IDialogService DialogService
+
+<PageTitle>Editando Doctor</PageTitle>
+
+<EditForm Model="@Model" OnValidSubmit="ActualizarDoctor">
+    <MudDialog>
+        <DialogContent>
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <MudTextField T="string" Label="Nombre" @bind-Value="Model.NombreCompleto" Required="true" />
+            <MudTextField T="string" Label="Cédula" Mask="@(new PatternMask("00000000000"))" @bind-Value="Model.Cedula" Required="true" />
+            <MudTextField T="string" Label="Teléfono" Mask="@(new PatternMask("0000000000"))" @bind-Value="Model.Telefono" Required="true" />
+            <MudTextField T="string" Label="Correo Electrónico" @bind-Value="Model.CorreoElectronico" Required="true" />
+            <MudDatePicker PickerVariant="PickerVariant.Dialog" @bind-Date="@fechaTransitiva" Label="Fecha de Contratación" Required="true" />
+            <MudTextField T="string" Label="Dirección" AutoGrow Lines="3" @bind-Value="Model.Direccion" Required="true" />
+            <MudSelect T="int" Label="Especialidad" HelperText="@especialidadesText" @bind-Value="@Model.IdEspecialidad" ToStringFunc="@((int id) => especialidades.FirstOrDefault(d => d.IdEspecialidad == id)?.Nombre)">
+                @if (especialidades != null)
+                {
+                    @foreach (var especialidad in especialidades)
+                    {
+                        <MudSelectItem T="int" Value="especialidad.IdEspecialidad">@especialidad.Nombre</MudSelectItem>
+                    }
+                }
+            </MudSelect>
+            <MudSelect T="int" Label="Departamentos" HelperText="@departamentosText" @bind-Value="@Model.IdDepartamento">
+                @if (departamentos != null)
+                {
+                    @foreach (var departamento in departamentos)
+                    {
+                        <MudSelectItem T="int" Value="departamento.IdDepartamento">@departamento.Nombre</MudSelectItem>
+                    }
+                }
+            </MudSelect>
+        </DialogContent>
+        <DialogActions>
+            <MudButton ButtonType="ButtonType.Submit" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Save">Crear</MudButton>
+            <MudButton Color="Color.Secondary" OnClick="Cancelar">Cancelar</MudButton>
+        </DialogActions>
+    </MudDialog>
+</EditForm>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public DoctorGetDTO Model { get; set; }
+
+    [Parameter] 
+    public EventCallback OnClose { get; set; }
+
+    private DateTime? fechaTransitiva = DateTime.Now;
+
+    private IEnumerable<EspecialidadGetDTO> especialidades;
+    private IEnumerable<DepartamentoGetDTO> departamentos;
+
+    private string departamentosText { get; set; } = "Cargando departamentos...";
+    private string especialidadesText { get; set; } = "Cargando especialidades...";
+
+    protected override async Task OnInitializedAsync()
+    {
+        fechaTransitiva = Model.FechaContratacion.ToDateTime(TimeOnly.Parse("12:00 PM"));
+        especialidades = await CargarEspecialidadesAsync();
+        departamentos = await CargarDepartamentosAsync();
+        departamentosText = departamentos.Any() ? string.Empty : "No se encontraron departamentos.";
+        especialidadesText = especialidades.Any() ? string.Empty : "No se encontraron departamentos.";
+    }
+
+    private async Task<IEnumerable<EspecialidadGetDTO>> CargarEspecialidadesAsync()
+    {
+        return await EspecialidadesService.GetEspecialidades();
+    }
+
+    private async Task<IEnumerable<DepartamentoGetDTO>> CargarDepartamentosAsync()
+    {
+        return await DepartamentosService.GetDepartamentos();
+    }
+
+    private async Task ActualizarDoctor()
+    {
+        var dto = new DoctorUpdateDTO();
+        Model.CopyPropertiesTo(dto);
+        dto.FechaContratacion = DateOnly.FromDateTime(fechaTransitiva.Value);
+        try
+        {
+            var success = await DoctoresService.UpdateDoctor(Model.IdDoctor, dto);
+            if (success.IsSuccessStatusCode)
+            {
+                Snackbar.Add("Doctor actualizado exitosamente", Severity.Success);
+                await OnClose.InvokeAsync(null);
+                MudDialog.Close(DialogResult.Ok(true));
+            }
+            else
+            {
+                var problemDetails = await success.Content.ReadFromJsonAsync<ProblemDetailsFront>();
+                if (problemDetails != null)
+                {
+                    await DialogService.ShowMessageBox("Error", problemDetails.Detail ?? "Error al actualizar el doctor");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private void Cancelar()
+    {
+        MudDialog.Cancel();
+    }
+}

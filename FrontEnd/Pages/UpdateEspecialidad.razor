@@ -1,0 +1,69 @@
+﻿@using Sistema_de_Gestion_de_Hospitales.FrontEnd.Interfaces
+@using System.ComponentModel.DataAnnotations
+@using Sistema_de_Gestion_de_Hospitales.Shared
+@using MudBlazor
+
+@inject ISnackbar Snackbar
+@inject IEspecialidadesService EspecialidadesService
+@inject IDialogService DialogService
+
+<PageTitle>Editando Especialidad</PageTitle>
+
+<EditForm Model="@Model" OnValidSubmit="ActualizarEspecialidad">
+    <MudDialog>
+        <DialogContent>
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <MudTextField T="string" Label="Nombre" @bind-Value="Model.Nombre" Required="true" />
+            <MudTextField T="string" Label="Descripción" AutoGrow Lines="3" @bind-Value="Model.Descripcion" Required="true" />
+        </DialogContent>
+        <DialogActions>
+            <MudButton ButtonType="ButtonType.Submit" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Save">Crear</MudButton>
+            <MudButton Color="Color.Secondary" OnClick="Cancelar">Cancelar</MudButton>
+        </DialogActions>
+    </MudDialog>
+</EditForm>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public EspecialidadGetDTO Model { get; set; }
+
+    [Parameter] public EventCallback OnClose { get; set; }
+
+
+    private async Task ActualizarEspecialidad()
+    {
+        var dto = new EspecialidadUpdateDTO();
+        Model.CopyPropertiesTo(dto);
+        try
+        {
+            var success = await EspecialidadesService.UpdateEspecialidad(Model.IdEspecialidad, dto);
+            if (success.IsSuccessStatusCode)
+            {
+                Snackbar.Add("Especiliadad actualizada exitosamente", Severity.Success);
+                await OnClose.InvokeAsync(null);
+                MudDialog.Close(DialogResult.Ok(true));
+            }
+            else
+            {
+                var problemDetails = await success.Content.ReadFromJsonAsync<ProblemDetailsFront>();
+                if (problemDetails != null)
+                {
+                    await DialogService.ShowMessageBox("Error", problemDetails.Detail ?? "Error al actualizar la especiliadad.");
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Error: {ex.Message}", Severity.Error);
+        }
+    }
+
+    private void Cancelar()
+    {
+        MudDialog.Cancel();
+    }
+}
