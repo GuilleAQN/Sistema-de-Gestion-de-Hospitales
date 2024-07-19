@@ -67,6 +67,16 @@ namespace Sistema_de_Gestion_de_Hospitales.API.Controller
 
             try
             {
+                if (await PacienteExists(pacienteDto.Cedula))
+                {
+                    return BadRequest(new ProblemDetails
+                    {
+                        Status = StatusCodes.Status400BadRequest,
+                        Title = "Cédula existente",
+                        Detail = "La cédula proporcionada ya existe.",
+                        Instance = HttpContext.Request.Path
+                    });
+                }
                 await context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -100,8 +110,8 @@ namespace Sistema_de_Gestion_de_Hospitales.API.Controller
                 return BadRequest(new ProblemDetails
                 {
                     Status = StatusCodes.Status400BadRequest,
-                    Title = "Cédula no coincide",
-                    Detail = "La cédula proporcionada no coincide con la cédula del paciente.",
+                    Title = "Cédula existente",
+                    Detail = "La cédula proporcionada ya existe.",
                     Instance = HttpContext.Request.Path
                 });
             }

@@ -70,6 +70,16 @@ namespace Sistema_de_Gestion_de_Hospitales.API.Controller
 
             try
             {
+                if (await HabitacionExists(habitacionDto.Numero))
+                {
+                    return BadRequest(new ProblemDetails
+                    {
+                        Status = StatusCodes.Status400BadRequest,
+                        Title = "Cédula existente",
+                        Detail = "La cédula proporcionada ya existe.",
+                        Instance = HttpContext.Request.Path
+                    });
+                }
                 await context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
@@ -103,8 +113,8 @@ namespace Sistema_de_Gestion_de_Hospitales.API.Controller
                 return BadRequest(new ProblemDetails
                 {
                     Status = StatusCodes.Status400BadRequest,
-                    Title = "Número de Habitación no coincide",
-                    Detail = "El número de habitación proporcionado no coincide con el número de habitación dado.",
+                    Title = "Número de Habitación existentecoincide",
+                    Detail = "El número de habitación proporcionado ya existe.",
                     Instance = HttpContext.Request.Path
                 });
             }
