@@ -1,0 +1,149 @@
+﻿@using Sistema_de_Gestion_de_Hospitales.FrontEnd.Interfaces
+@using Sistema_de_Gestion_de_Hospitales.Shared
+@using MudBlazor
+
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+@inject ICitasService CitasService
+@inject ICategoriasCitasService CategoriasCitasService
+@inject IPacientesService PacientesService
+@inject IDoctoresService DoctoresService
+@inject IEnfermerasService EnfermerasService
+@inject IDialogService DialogService
+
+<PageTitle>Insertando Cita</PageTitle>
+
+<EditForm Model="@Model" OnValidSubmit="CrearNuevaCita">
+<MudDialog>
+    <DialogContent>
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+            <MudTextField T="string" Label="Descripción" @bind-Value="@Model.Descripción" Required="true" />
+            <MudDatePicker PickerVariant="PickerVariant.Dialog" @bind-Date="@Model.Fecha" Label="Fecha Agendada" Required="true" />
+            <MudSelect T="int" Label="Doctor" @bind-Value="@Model.IdDoctor" HelperText="@doctoresText" ToStringFunc="@((int id) => doctores.FirstOrDefault(d => d.IdDoctor == id)?.NombreCompleto)">
+                @if (doctores != null)
+                {
+                     @foreach (var doctor in doctores)
+                     {
+                         <MudSelectItem T="int" Value="doctor.IdDoctor">@doctor.NombreCompleto</MudSelectItem>
+                     }
+                }
+            </MudSelect>
+            <MudSelect Label="Enfermera" @bind-Value="@Model.IdEnfermera" HelperText="@enfermerasText" ToStringFunc="@((int id) => enfermeras.FirstOrDefault(d => d.IdEnfermera == id)?.NombreCompleto)">
+                @if (enfermeras != null)
+                {
+                    @foreach (var enfermera in enfermeras)
+                    {
+                        <MudSelectItem T="int" Value="enfermera.IdEnfermera">@enfermera.NombreCompleto</MudSelectItem>
+                    }
+                }
+            </MudSelect>
+            <MudSelect Label="Pacientes" @bind-Value="@Model.IdPaciente" HelperText="@pacientesText" ToStringFunc="@((int id) => pacientes.FirstOrDefault(d => d.IdPaciente == id)?.NombreCompleto)">
+                @if (pacientes != null)
+                {
+                   @foreach (var paciente in pacientes)
+                   {
+                       <MudSelectItem T="int" Value="paciente.IdPaciente">@paciente.NombreCompleto</MudSelectItem>
+                   }
+                }
+            </MudSelect>
+            <MudSelect Label="Categoria" @bind-Value="@Model.IdCategoriaCita" HelperText="@categoriasText" ToStringFunc="@((int id) => categoriaCitas.FirstOrDefault(d => d.IdCategoriaCita == id)?.Nombre)">
+                @if (categoriaCitas != null)
+                {
+                    @foreach (var categoriaCita in categoriaCitas)
+                    {
+                        <MudSelectItem T="int" Value="categoriaCita.IdCategoriaCita">@categoriaCita.Nombre</MudSelectItem>
+                    }
+                }
+            </MudSelect>
+    </DialogContent>
+    <DialogActions>
+       <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">Crear</MudButton>
+       <MudButton Variant="Variant.Filled" Color="Color.Secondary" @onclick="CancelarCreacion">Cancelar</MudButton>
+    </DialogActions>
+</MudDialog>
+</EditForm>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
+
+    [Parameter]
+    public CitaInsertDTO Model { get; set; }
+
+    private CitaInsertDTO nuevaCita = new CitaInsertDTO();
+
+    [Parameter] public EventCallback OnClose { get; set; }
+
+    private IEnumerable<PacienteGetDTO> pacientes;
+    private IEnumerable<DoctorGetDTO> doctores;
+    private IEnumerable<EnfermeraGetDTO> enfermeras;
+    private IEnumerable<CategoriaCitaGetDTO> categoriaCitas;
+
+    private string doctoresText { get; set; } = "Cargando doctores...";
+    private string enfermerasText { get; set; } = "Cargando enfermeras...";
+    private string categoriasText { get; set; } = "Cargando categorias...";
+    private string pacientesText { get; set; } = "Cargando pacientes...";
+
+    protected override async Task OnInitializedAsync()
+    {
+        pacientes = await CargarPacientesAsync();
+        doctores = await CargarDoctoresAsync();
+        enfermeras = await CargarEnfermerasAsync();
+        categoriaCitas = await CargarCategoriaCitasAsync();
+
+        doctoresText = doctores.Any() ? string.Empty : "No se encontraron doctores.";
+        enfermerasText = enfermeras.Any() ? string.Empty : "No se encontraron enfermeras.";
+        categoriasText = categoriaCitas.Any() ? string.Empty : "No se encontraron categorias.";
+        pacientesText = pacientes.Any() ? string.Empty : "No se encontraron pacientes.";
+    }
+
+    protected override void OnParametersSet()
+    {
+        nuevaCita = Model;
+    }
+
+    private async Task<IEnumerable<PacienteGetDTO>> CargarPacientesAsync()
+    {
+        return await PacientesService.GetPacientes();
+    }
+
+    private async Task<IEnumerable<DoctorGetDTO>> CargarDoctoresAsync()
+    {
+        return await DoctoresService.GetDoctores();
+    }
+
+    private async Task<IEnumerable<EnfermeraGetDTO>> CargarEnfermerasAsync()
+    {
+        return await EnfermerasService.GetEnfermeras();
+    }
+
+    private async Task<IEnumerable<CategoriaCitaGetDTO>> CargarCategoriaCitasAsync()
+    {
+        return await CategoriasCitasService.GetCategoriasCitasAsync();
+    }
+
+
+    private async Task CrearNuevaCita()
+    {
+        var success = await CitasService.CreateCita(nuevaCita);
+        if (success.IsSuccessStatusCode)
+        {
+            await OnClose.InvokeAsync(null);
+            MudDialog.Close(DialogResult.Ok(true));
+        }
+        else
+        {
+            var problemDetails = await success.Content.ReadFromJsonAsync<ProblemDetailsFront>();
+            if (problemDetails != null)
+            {
+                await DialogService.ShowMessageBox("Error", problemDetails.Detail ?? "Error al crear la cita");
+            }
+        }
+    }
+
+    private void CancelarCreacion()
+    {
+        MudDialog.Cancel();
+    }
+}

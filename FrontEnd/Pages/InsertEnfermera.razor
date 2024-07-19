@@ -1,0 +1,98 @@
+﻿@using Sistema_de_Gestion_de_Hospitales.FrontEnd.Interfaces
+@using System.ComponentModel.DataAnnotations
+@using Sistema_de_Gestion_de_Hospitales.Shared
+@using MudBlazor
+
+@inject ISnackbar Snackbar
+@inject IEnfermerasService EnfermerasService
+@inject IDepartamentosService DepartamentosService
+@inject IDialogService DialogService
+
+<PageTitle>Insertando Enfermera</PageTitle>
+
+<EditForm Model="@Model" OnValidSubmit="CrearNuevaEnfermera">
+<MudDialog>
+    <DialogContent>
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <MudTextField T="string" Label="Nombre" @bind-Value="Model.NombreCompleto" Required="true" />
+            <MudTextField T="string" Label="Cédula" Mask="@(new PatternMask("00000000000"))" @bind-Value="Model.Cedula" Required="true" />
+            <MudTextField T="string" Label="Teléfono" Mask="@(new PatternMask("0000000000"))" @bind-Value="Model.Telefono" Required="true" />
+            <MudTextField T="string" Label="Correo Electrónico" @bind-Value="Model.CorreoElectronico" Required="true" />
+            <MudDatePicker PickerVariant="PickerVariant.Dialog" @bind-Date="@fechaTransitiva" Label="Fecha de Contratación" Required="true" />
+            <MudTextField T="string" Label="Dirección" AutoGrow Lines="3" @bind-Value="Model.Direccion" Required="true" />
+            <MudSelect T="int" Label="Departamentos" HelperText="@departamentosText" @bind-Value="@Model.IdDepartamento">
+            @if (departamentos != null)
+            {
+                @foreach (var departamento in departamentos)
+                {
+                    <MudSelectItem T="int" Value="departamento.IdDepartamento">@departamento.Nombre</MudSelectItem>
+                }
+            }
+            </MudSelect>
+    </DialogContent>
+    <DialogActions>
+       <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">Crear</MudButton>
+       <MudButton Variant="Variant.Filled" Color="Color.Secondary" @onclick="CancelarCreacion">Cancelar</MudButton>
+    </DialogActions>
+</MudDialog>
+</EditForm>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
+
+    [Parameter] 
+    public EnfermeraInsertDTO Model { get; set; }
+
+    [Parameter] public EventCallback OnClose { get; set; }
+
+    private EnfermeraInsertDTO nuevaEnfermera = new EnfermeraInsertDTO();
+
+    private DateTime? fechaTransitiva = DateTime.Now;
+
+    private IEnumerable<DepartamentoGetDTO> departamentos;
+
+    private string departamentosText { get; set; } = "Cargando departamentos...";
+
+    protected override async Task OnInitializedAsync()
+    {
+        Model.FechaContratacion = DateOnly.FromDateTime(fechaTransitiva.Value);
+        departamentosText = departamentos.Any() ? string.Empty : "No se encontraron departamentos.";
+        departamentos = await CargarDepartamentosAsync();
+    }
+
+    private async Task<IEnumerable<DepartamentoGetDTO>> CargarDepartamentosAsync()
+    {
+        return await DepartamentosService.GetDepartamentos();
+    }
+
+    protected override void OnParametersSet()
+    {
+        nuevaEnfermera = Model;
+    }
+
+    private async Task CrearNuevaEnfermera ()
+    {
+        nuevaEnfermera.FechaContratacion = DateOnly.FromDateTime(fechaTransitiva.Value);
+        var success = await EnfermerasService.CreateEnfermera (nuevaEnfermera);
+        if (success.IsSuccessStatusCode)
+        {
+            await OnClose.InvokeAsync(null);
+            MudDialog.Close(DialogResult.Ok(true));
+        }
+        else
+        {
+            var problemDetails = await success.Content.ReadFromJsonAsync<ProblemDetailsFront>();
+            if (problemDetails != null)
+            {
+                await DialogService.ShowMessageBox("Error", problemDetails.Detail ?? "Error al crear la nueva enfermera.");
+            }
+        }
+    }
+
+    private void CancelarCreacion()
+    {
+        MudDialog.Cancel();
+    }
+}

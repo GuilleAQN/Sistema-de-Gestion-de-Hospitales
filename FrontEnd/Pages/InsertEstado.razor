@@ -4,22 +4,21 @@
 @using MudBlazor
 
 @inject ISnackbar Snackbar
-@inject ICategoriasCitasService CategoriasCitasService
+@inject IEstadosService EstadosService
 @inject IDialogService DialogService
 
-<PageTitle>Insertando Categoria</PageTitle>
+<PageTitle>Insertando Estado</PageTitle>
 
-<EditForm Model="@Model" OnValidSubmit="CrearNuevaCategoria">
+<EditForm Model="@Model" OnValidSubmit="CrearNuevoEstado">
 <MudDialog>
     <DialogContent>
         <DataAnnotationsValidator />
         <ValidationSummary />
             <MudTextField T="string" Label="Nombre" @bind-Value="Model.Nombre" Required="true" />
-            <MudTextField T="string" Label="Descripción" AutoGrow Lines="5" @bind-Value="Model.Descripcion" Required="true" />
     </DialogContent>
     <DialogActions>
-        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">Crear</MudButton>
-        <MudButton Variant="Variant.Filled" Color="Color.Secondary" @onclick="CancelarCreacion">Cancelar</MudButton>
+       <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary">Crear</MudButton>
+       <MudButton Variant="Variant.Filled" Color="Color.Secondary" @onclick="CancelarCreacion">Cancelar</MudButton>
     </DialogActions>
 </MudDialog>
 </EditForm>
@@ -29,21 +28,21 @@
     private MudDialogInstance MudDialog { get; set; }
 
     [Parameter] 
-    public CategoriaCitaInsertDTO Model { get; set; }
+    public EstadoInsertDTO Model { get; set; }
 
     [Parameter] 
     public EventCallback OnClose { get; set; }
 
-    private CategoriaCitaInsertDTO nuevaCategoria = new CategoriaCitaInsertDTO();
+    private EstadoInsertDTO nuevoEstado = new EstadoInsertDTO();
 
     protected override void OnParametersSet()
     {
-        nuevaCategoria = Model;
+        nuevoEstado = Model;
     }
 
-    private async Task CrearNuevaCategoria()
+    private async Task CrearNuevoEstado()
     {
-        var success = await CategoriasCitasService.CreateCategoriasCitaAsync(nuevaCategoria);
+        var success = await EstadosService.CreateEstado(nuevoEstado);
         if (success.IsSuccessStatusCode)
         {
             await OnClose.InvokeAsync(null);
@@ -54,7 +53,7 @@
             var problemDetails = await success.Content.ReadFromJsonAsync<ProblemDetailsFront>();
             if (problemDetails != null)
             {
-                await DialogService.ShowMessageBox("Error", problemDetails.Detail ?? "Error al crear la categoria");
+                await DialogService.ShowMessageBox("Error", problemDetails.Detail ?? "Error al crear el nuevo estado.");
             }
         }
     }
