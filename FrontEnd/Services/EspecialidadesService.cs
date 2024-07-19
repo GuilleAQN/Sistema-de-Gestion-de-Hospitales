@@ -1,5 +1,4 @@
 ﻿using Sistema_de_Gestion_de_Hospitales.FrontEnd.Interfaces;
-using Sistema_de_Gestion_de_Hospitales.Shared.Enfermera;
 using Sistema_de_Gestion_de_Hospitales.Shared.Especialidad;
 using System.Net.Http.Json;
 
@@ -25,17 +24,14 @@ namespace Sistema_de_Gestion_de_Hospitales.FrontEnd.Services
             return await httpClient.GetFromJsonAsync<EspecialidadGetDTO>($"{BaseUrl}/{id}");
         }
 
-        public async Task<int> CreateEspecialidad(EspecialidadInsertDTO especialidadDto)
+        public async Task<HttpResponseMessage> CreateEspecialidad(EspecialidadInsertDTO especialidadDto)
         {
-            var response = await httpClient.PostAsJsonAsync(BaseUrl, especialidadDto);
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<int>();
+            return await httpClient.PostAsJsonAsync(BaseUrl, especialidadDto);
         }
 
-        public async Task<bool> UpdateEspecialidad(int id, EspecialidadUpdateDTO especialidadDto)
+        public async Task<HttpResponseMessage> UpdateEspecialidad(int id, EspecialidadUpdateDTO especialidadDto)
         {
-            var response = await httpClient.PutAsJsonAsync($"{BaseUrl}/{id}", especialidadDto);
-            return response.IsSuccessStatusCode;
+            return await httpClient.PutAsJsonAsync($"{BaseUrl}/{id}", especialidadDto);
         }
 
         public async Task<bool> DeleteEspecialidad(int id)

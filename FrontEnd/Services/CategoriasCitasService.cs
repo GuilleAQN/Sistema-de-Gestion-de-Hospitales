@@ -24,22 +24,14 @@ namespace Sistema_de_Gestion_de_Hospitales.FrontEnd.Services
             return await httpClient.GetFromJsonAsync<CategoriaCitaGetDTO>($"{BaseUrl}/{id}");
         }
 
-        public async Task<bool> UpdateCategoriasCitaAsync(int id, CategoriaCitaUpdateDTO categoriasCitaDto)
+        public async Task<HttpResponseMessage> UpdateCategoriasCitaAsync(int id, CategoriaCitaUpdateDTO categoriasCitaDto)
         {
-            var response = await httpClient.PutAsJsonAsync($"{BaseUrl}/{id}", categoriasCitaDto);
-            return response.IsSuccessStatusCode;
+            return await httpClient.PutAsJsonAsync($"{BaseUrl}/{id}", categoriasCitaDto);
         }
 
-        public async Task<int> CreateCategoriasCitaAsync(CategoriaCitaInsertDTO categoriasCitaDto)
+        public async Task<HttpResponseMessage> CreateCategoriasCitaAsync(CategoriaCitaInsertDTO categoriasCitaDto)
         {
-            var response = await httpClient.PostAsJsonAsync($"{BaseUrl}", categoriasCitaDto);
-            if (response.IsSuccessStatusCode)
-            {
-                var id = await response.Content.ReadFromJsonAsync<int>();
-                return id;
-            }
-
-            return 0;
+            return await httpClient.PostAsJsonAsync($"{BaseUrl}", categoriasCitaDto);
         }
 
         public async Task<bool> DeleteCategoriasCitaAsync(int id)

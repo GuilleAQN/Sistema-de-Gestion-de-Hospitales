@@ -8,7 +8,7 @@ namespace Sistema_de_Gestion_de_Hospitales.FrontEnd.Services
     public class DepartamentosService : IDepartamentosService
     {
         private readonly HttpClient httpClient;
-        private const string BaseUrl = "https://localhost:44382/api/departamentos"; // Actualiza con tu URL base
+        private const string BaseUrl = "api/Departamentos";
 
         public DepartamentosService(HttpClient httpClient)
         {
@@ -25,18 +25,14 @@ namespace Sistema_de_Gestion_de_Hospitales.FrontEnd.Services
             return await httpClient.GetFromJsonAsync<DepartamentoGetDTO>($"{BaseUrl}/{id}");
         }
 
-        public async Task<int> CreateDepartamento(DepartamentoInsertDTO departamentoDto)
+        public async Task<HttpResponseMessage> CreateDepartamento(DepartamentoInsertDTO departamentoDto)
         {
-            var response = await httpClient.PostAsJsonAsync(BaseUrl, departamentoDto);
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<int>();
-
+            return await httpClient.PostAsJsonAsync(BaseUrl, departamentoDto);
         }
 
-        public async Task<bool> UpdateDepartamento(int id, DepartamentoUpdateDTO departamentoDto)
+        public async Task<HttpResponseMessage> UpdateDepartamento(int id, DepartamentoUpdateDTO departamentoDto)
         {
-            var response = await httpClient.PutAsJsonAsync($"{BaseUrl}/{id}", departamentoDto);
-            return response.IsSuccessStatusCode;
+            return await httpClient.PutAsJsonAsync($"{BaseUrl}/{id}", departamentoDto);
         }
 
         public async Task<bool> DeleteDepartamento(int id)

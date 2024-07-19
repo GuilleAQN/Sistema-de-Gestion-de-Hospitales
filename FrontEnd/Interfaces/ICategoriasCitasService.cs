@@ -6,8 +6,8 @@ namespace Sistema_de_Gestion_de_Hospitales.FrontEnd.Interfaces
     {
         Task<IEnumerable<CategoriaCitaGetDTO>> GetCategoriasCitasAsync();
         Task<CategoriaCitaGetDTO> GetCategoriasCitaAsync(int id);
-        Task<bool> UpdateCategoriasCitaAsync(int id, CategoriaCitaUpdateDTO categoriasCitaDto);
-        Task<int> CreateCategoriasCitaAsync(CategoriaCitaInsertDTO categoriasCitaDto);
+        Task<HttpResponseMessage> UpdateCategoriasCitaAsync(int id, CategoriaCitaUpdateDTO categoriasCitaDto);
+        Task<HttpResponseMessage> CreateCategoriasCitaAsync(CategoriaCitaInsertDTO categoriasCitaDto);
         Task<bool> DeleteCategoriasCitaAsync(int id);
     }
 }

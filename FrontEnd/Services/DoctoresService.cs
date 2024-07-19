@@ -24,22 +24,14 @@ namespace Sistema_de_Gestion_de_Hospitales.FrontEnd.Services
             return await httpClient.GetFromJsonAsync<DoctorGetDTO>($"{BaseUrl}/{id}");
         }
 
-        public async Task<int> CreateDoctor(DoctorInsertDTO doctorDto)
+        public async Task<HttpResponseMessage> CreateDoctor(DoctorInsertDTO doctorDto)
         {
-            var response = await httpClient.PostAsJsonAsync($"{BaseUrl}", doctorDto);
-            if (response.IsSuccessStatusCode)
-            {
-                var id = await response.Content.ReadFromJsonAsync<int>();
-                return id;
-            }
-
-            return 0;
+            return await httpClient.PostAsJsonAsync($"{BaseUrl}", doctorDto);
         }
 
-        public async Task<bool> UpdateDoctor(int id, DoctorUpdateDTO doctorDto)
+        public async Task<HttpResponseMessage> UpdateDoctor(int id, DoctorUpdateDTO doctorDto)
         {
-            var response = await httpClient.PutAsJsonAsync($"{BaseUrl}/{id}", doctorDto);
-            return response.IsSuccessStatusCode;
+            return await httpClient.PutAsJsonAsync($"{BaseUrl}/{id}", doctorDto);
         }
 
         public async Task<bool> DeleteDoctor(int id)

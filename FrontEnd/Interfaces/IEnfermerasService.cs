@@ -6,8 +6,8 @@ namespace Sistema_de_Gestion_de_Hospitales.FrontEnd.Interfaces
     {
         Task<IEnumerable<EnfermeraGetDTO>> GetEnfermeras();
         Task<EnfermeraGetDTO> GetEnfermera(int id);
-        Task<int> CreateEnfermera(EnfermeraInsertDTO enfermeraDto);
-        Task<bool> UpdateEnfermera(int id, EnfermeraUpdateDTO enfermeraDto);
+        Task<HttpResponseMessage> CreateEnfermera(EnfermeraInsertDTO enfermeraDto);
+        Task<HttpResponseMessage> UpdateEnfermera(int id, EnfermeraUpdateDTO enfermeraDto);
         Task<bool> DeleteEnfermera(int id);
     }
 }

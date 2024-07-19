@@ -24,17 +24,14 @@ namespace Sistema_de_Gestion_de_Hospitales.FrontEnd.Services
             return await httpClient.GetFromJsonAsync<HabitacionGetDTO>($"{BaseUrl}/{id}");
         }
 
-        public async Task<int> CreateHabitacion(HabitacionInsertDTO habitacionDto)
+        public async Task<HttpResponseMessage> CreateHabitacion(HabitacionInsertDTO habitacionDto)
         {
-            var response = await httpClient.PostAsJsonAsync(BaseUrl, habitacionDto);
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<int>();
+            return await httpClient.PostAsJsonAsync(BaseUrl, habitacionDto);
         }
 
-        public async Task<bool> UpdateHabitacion(int id, HabitacionUpdateDTO habitacionDto)
+        public async Task<HttpResponseMessage> UpdateHabitacion(int id, HabitacionUpdateDTO habitacionDto)
         {
-            var response = await httpClient.PutAsJsonAsync($"{BaseUrl}/{id}", habitacionDto);
-            return response.IsSuccessStatusCode;
+            return await httpClient.PutAsJsonAsync($"{BaseUrl}/{id}", habitacionDto);
         }
 
         public async Task<bool> DeleteHabitacion(int id)

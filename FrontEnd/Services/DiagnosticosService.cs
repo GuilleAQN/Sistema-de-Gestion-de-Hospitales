@@ -7,7 +7,7 @@ namespace Sistema_de_Gestion_de_Hospitales.FrontEnd.Services
     public class DiagnosticosService : IDiagnosticosService
     {
         private readonly HttpClient httpClient;
-        private const string BaseUrl = "api/Departamentos";
+        private const string BaseUrl = "api/Diagnosticos";
 
         public DiagnosticosService(HttpClient httpClient)
         {
@@ -24,17 +24,14 @@ namespace Sistema_de_Gestion_de_Hospitales.FrontEnd.Services
             return await httpClient.GetFromJsonAsync<DiagnosticoGetDTO>($"{BaseUrl}/{id}");
         }
 
-        public async Task<int> CreateDiagnostico(DiagnosticoInsertDTO diagnosticoDto)
+        public async Task<HttpResponseMessage> CreateDiagnostico(DiagnosticoInsertDTO diagnosticoDto)
         {
-            var response = await httpClient.PostAsJsonAsync(BaseUrl, diagnosticoDto);
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<int>();
+            return await httpClient.PostAsJsonAsync(BaseUrl, diagnosticoDto);
         }
 
-        public async Task<bool> UpdateDiagnostico(int id, DiagnosticoUpdateDTO diagnosticoDto)
+        public async Task<HttpResponseMessage> UpdateDiagnostico(int id, DiagnosticoUpdateDTO diagnosticoDto)
         {
-            var response = await httpClient.PutAsJsonAsync($"{BaseUrl}/{id}", diagnosticoDto);
-            return response.IsSuccessStatusCode;
+            return await httpClient.PutAsJsonAsync($"{BaseUrl}/{id}", diagnosticoDto);
         }
 
         public async Task<bool> DeleteDiagnostico(int id)
