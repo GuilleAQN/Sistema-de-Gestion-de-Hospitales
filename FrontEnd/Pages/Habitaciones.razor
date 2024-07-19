@@ -17,16 +17,16 @@
         {
             <MudProgressLinear Color="Color.Primary" Indeterminate="true" />
         }
-        else if (habitaciones != null && habitaciones.Any())
+        else if (habitaciones != null)
         {
             <MudGrid Container="true" Justify="Justify.SpaceBetween" Class="ml-2" Spacing="3">
                 <MudItem xs="8">
                     <MudButton Class="mb-4" Variant="Variant.Filled" DropShadow="false" Color="Color.Primary" @onclick="AbrirFormularioInsercion">Agregar Nueva Habitación</MudButton>
                 </MudItem>
             </MudGrid>
-            <MudDataGrid T="HabitacionGetDTO" MultiSelection="true" Items="@habitaciones" Hover="true" Dense="true" Filterable="true" Sortable="true">
+            <MudDataGrid Items="@habitaciones" Hover="true" Dense="true" Filterable="true">
                 <Columns>
-                    <SelectColumn T="HabitacionGetDTO" Hidden />
+                    <HierarchyColumn T="HabitacionGetDTO" />
                     <PropertyColumn Property="x => x.IdHabitacion" Title="ID" />
                     <PropertyColumn Property="x => x.Piso" Title="Piso" />
                     <PropertyColumn Property="x => x.Numero" Title="Número" />
@@ -40,9 +40,27 @@
                         </CellTemplate>
                     </TemplateColumn>
                 </Columns>
+                <ChildRowContent>
+                    <MudCard>
+                        <MudCardHeader>
+                            <CardHeaderContent>
+                                <MudText Typo="Typo.h6">@context.Item.Numero</MudText>
+                            </CardHeaderContent>
+                        </MudCardHeader>
+                        <MudCardContent>
+                            <MudText>Id: @context.Item.IdHabitacion</MudText>
+                            <MudText>Piso: @context.Item.Piso</MudText>
+                            <MudText>Tipo: @context.Item.Tipo</MudText>
+                            <MudText>Estado: @context.Item.NombreEstado</MudText>
+                        </MudCardContent>
+                    </MudCard>
+                </ChildRowContent>
                 <PagerContent>
                     <MudDataGridPager T="HabitacionGetDTO" PageSizeOptions="[5,10,15]" />
                 </PagerContent>
+                <NoRecordsContent>
+                    No se encontro ningún resultado.
+                </NoRecordsContent>
             </MudDataGrid>
             <style>
                 .dialog-show {
@@ -52,12 +70,7 @@
         }
         else
         {
-            <MudGrid Container="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Spacing="2">
-                <MudItem>
-                    <MudText Typo="Typo.subtitle1" Align="Align.Center">No se encontro ningún resultado.</MudText>
-                    <MudButton Class="mb-4" Variant="Variant.Filled" DropShadow="false" Color="Color.Primary" @onclick="AbrirFormularioInsercion">Agregar Nueva Habitación</MudButton>
-                </MudItem>
-            </MudGrid>
+            <MudText Typo="Typo.subtitle1" Align="Align.Center">Ha ocurrido un error al procesar la consulta.</MudText>
         }
     </MudPaper>
 </MudContainer>

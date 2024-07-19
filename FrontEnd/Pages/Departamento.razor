@@ -17,19 +17,18 @@
         {
             <MudProgressLinear Color="Color.Primary" Indeterminate="true" />
         }
-        else if (departamentos != null && departamentos.Any())
+        else if (departamentos != null)
         {
             <MudGrid Container="true" Justify="Justify.SpaceBetween" Class="ml-2" Spacing="3">
                 <MudItem xs="8">
                     <MudButton Class="mb-4" Variant="Variant.Filled" DropShadow="false" Color="Color.Primary" @onclick="AbrirFormularioInsercion">Agregar Nuevo Departamento</MudButton>
                 </MudItem>
             </MudGrid>
-            <MudDataGrid T="DepartamentoGetDTO" MultiSelection="true" Items="@departamentos" Hover="true" Dense="true" Filterable="true" Sortable="true">
+            <MudDataGrid Items="@departamentos" Hover="true" Dense="true" Filterable="true">
                 <Columns>
-                    <SelectColumn T="DepartamentoGetDTO" Hidden />
+                    <HierarchyColumn T="DepartamentoGetDTO" />
                     <PropertyColumn Property="x => x.IdDepartamento" Title="ID" />
-                    <PropertyColumn Property="x => x.Nombre" Title="Fecha" />
-                    <PropertyColumn Property="x => x.Ubicación" Title="Ubicacion" />
+                    <PropertyColumn Property="x => x.Nombre" Title="Nombre" />
                     <TemplateColumn>
                         <CellTemplate>
                             <MudStack Row>
@@ -39,9 +38,27 @@
                         </CellTemplate>
                     </TemplateColumn>
                 </Columns>
+                <ChildRowContent>
+                    <MudCard>
+                        <MudCardHeader>
+                            <CardHeaderContent>
+                                <MudText Typo="Typo.h6">@context.Item.Nombre</MudText>
+                            </CardHeaderContent>
+                        </MudCardHeader>
+                        <MudCardContent>
+                            <MudText>Id: @context.Item.IdDepartamento</MudText>
+                            <MudText>Teléfono: @context.Item.Telefono</MudText>
+                            <MudText>Ubicación: @context.Item.Ubicación</MudText>
+                            <MudText>Descripción: @context.Item.Descripcion</MudText>
+                        </MudCardContent>
+                    </MudCard>
+                </ChildRowContent>
                 <PagerContent>
                     <MudDataGridPager T="DepartamentoGetDTO" PageSizeOptions="[5,10,15]" />
                 </PagerContent>
+                <NoRecordsContent>
+                    No se encontro ningún resultado.
+                </NoRecordsContent>
             </MudDataGrid>
             <style>
                 .dialog-show {
@@ -51,12 +68,7 @@
         }
         else
         {
-            <MudGrid Container="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Class="ml-2" Spacing="3">
-                <MudItem>
-                    <MudText Typo="Typo.subtitle1" Align="Align.Center">No se encontro ningún resultado.</MudText>
-                    <MudButton Class="mb-4" Variant="Variant.Filled" DropShadow="false" Color="Color.Primary" @onclick="AbrirFormularioInsercion">Agregar Nuevo Departamento</MudButton>
-                </MudItem>
-            </MudGrid>
+            <MudText Typo="Typo.subtitle1" Align="Align.Center">Ha ocurrido un error al procesar la consulta.</MudText>
         }
     </MudPaper>
 </MudContainer>
@@ -93,7 +105,7 @@
         var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true, BackgroundClass = "dialog-show" };
         parameters.Add("OnClose", EventCallback.Factory.Create(this, OnDialogClose));
 
-        var result = await DialogService.ShowAsync<InsertDepartamento>("Nueva Departamento", parameters, options);
+        var result = await DialogService.ShowAsync<InsertDepartamento>("Nuevo Departamento", parameters, options);
         if (await result.Result == DialogResult.Ok(true))
         {
             OnDialogClose();

@@ -19,14 +19,14 @@
         }
         else if (categoriasCitas != null && categoriasCitas.Any())
         {
-            <MudGrid Container="true" Justify="Justify.SpaceBetween" Class="ml-2" Spacing="3">
+            <MudGrid Container="true"  Justify="Justify.SpaceBetween" Class="ml-2" Spacing="3">
                 <MudItem xs="8">
                     <MudButton Class="mb-4" Variant="Variant.Filled" DropShadow="false" Color="Color.Primary" @onclick="AbrirFormularioInsercion">Agregar Nueva Categoría</MudButton>
                 </MudItem>
             </MudGrid>
-            <MudDataGrid T="CategoriaCitaGetDTO" MultiSelection="true" Items="@categoriasCitas" Hover="true" Dense="true" Filterable="true" Sortable="true">
+            <MudDataGrid Items="@categoriasCitas"  Hover="true" Dense="true" Filterable="true">
                 <Columns>
-                    <SelectColumn T="CategoriaCitaGetDTO" Hidden />
+                    <HierarchyColumn T="CategoriaCitaGetDTO"/>
                     <PropertyColumn Property="x => x.IdCategoriaCita" Title="ID" />
                     <PropertyColumn Property="x => x.Nombre" Title="Nombre" />
                     <TemplateColumn>
@@ -38,9 +38,25 @@
                         </CellTemplate>
                     </TemplateColumn>
                 </Columns>
+                <ChildRowContent>
+                    <MudCard>
+                        <MudCardHeader>
+                            <CardHeaderContent>
+                                <MudText Typo="Typo.h6">@context.Item.Nombre</MudText>
+                            </CardHeaderContent>
+                        </MudCardHeader>
+                        <MudCardContent>
+                            <MudText>Id: @context.Item.IdCategoriaCita</MudText>
+                            <MudText>Descripción: @context.Item.Descripcion</MudText>
+                        </MudCardContent>
+                    </MudCard>
+                </ChildRowContent>
                 <PagerContent>
                     <MudDataGridPager T="CategoriaCitaGetDTO" PageSizeOptions="[5,10,15]" />
                 </PagerContent>
+                <NoRecordsContent>
+                    No se encontro ningún resultado.
+                </NoRecordsContent>
             </MudDataGrid>
             <style>
                 .dialog-show {
@@ -50,12 +66,7 @@
         }
         else
         {
-                <MudGrid Container="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Class="ml-2" Spacing="3">
-                <MudItem>
-                    <MudText Typo="Typo.subtitle1" Align="Align.Center">No se encontro ningún resultado.</MudText>
-                    <MudButton Class="mb-4" Variant="Variant.Filled" DropShadow="false" Color="Color.Primary" @onclick="AbrirFormularioInsercion">Agregar Nueva Categoría</MudButton>
-                </MudItem>
-            </MudGrid>
+            <MudText Typo="Typo.subtitle1" Align="Align.Center">Ha ocurrido un error al procesar la consulta.</MudText>
         }
     </MudPaper>
 </MudContainer>

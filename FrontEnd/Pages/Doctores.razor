@@ -17,18 +17,17 @@
         {
             <MudProgressLinear Color="Color.Primary" Indeterminate="true" />
         }
-        else if (doctores != null && doctores.Any())
+        else if (doctores != null)
         {
             <MudGrid Container="true" Justify="Justify.SpaceBetween" Class="ml-2" Spacing="3">
                 <MudItem xs="8">
                     <MudButton Class="mb-4" Variant="Variant.Filled" DropShadow="false" Color="Color.Primary" @onclick="AbrirFormularioInsercion">Agregar Nuevo Doctor</MudButton>
                 </MudItem>
             </MudGrid>
-            <MudDataGrid T="DoctorGetDTO" MultiSelection="true" Items="@doctores" Hover="true" Dense="true" Filterable="true" Sortable="true">
+            <MudDataGrid Items="@doctores" Hover="true" Dense="true" Filterable="true">
                 <Columns>
                     <SelectColumn T="DoctorGetDTO" Hidden />
                     <PropertyColumn Property="x => x.IdDoctor" Title="ID" />
-                    <PropertyColumn Property="x => x.Cedula" Title="Cedula" />
                     <PropertyColumn Property="x => x.NombreCompleto" Title="Nombre" />
                     <PropertyColumn Property="x => x.CorreoElectronico" Title="Correo Electrónico" />
                     <PropertyColumn Property="x => x.NombreEspecialidad" Title="Especialidad" />
@@ -41,9 +40,29 @@
                         </CellTemplate>
                     </TemplateColumn>
                 </Columns>
+                <ChildRowContent>
+                    <MudCard>
+                        <MudCardHeader>
+                            <CardHeaderContent>
+                                <MudText Typo="Typo.h6">@context.Item.NombreCompleto</MudText>
+                            </CardHeaderContent>
+                        </MudCardHeader>
+                        <MudCardContent>
+                            <MudText>Cédula: @context.Item.Cedula</MudText>
+                            <MudText>Teléfono: @context.Item.Telefono</MudText>
+                            <MudText>Correo Electrónico: @context.Item.CorreoElectronico</MudText>
+                            <MudText>Especialidad: @context.Item.NombreEspecialidad</MudText>
+                            <MudText>Departamento: @context.Item.NombreDepartamento</MudText>
+                            <MudText>Direción: @context.Item.Direccion</MudText>
+                        </MudCardContent>
+                    </MudCard>
+                </ChildRowContent>
                 <PagerContent>
                     <MudDataGridPager T="DoctorGetDTO" PageSizeOptions="[5,10,15]" />
                 </PagerContent>
+                <NoRecordsContent>
+                    No se encontro ningún resultado.
+                </NoRecordsContent>
             </MudDataGrid>
             <style>
                 .dialog-show {
@@ -53,12 +72,7 @@
         }
         else
         {
-            <MudGrid Container="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Spacing="2">
-                <MudItem>
-                    <MudText Typo="Typo.subtitle1" Align="Align.Center">No se encontro ningún resultado.</MudText>
-                    <MudButton Class="mb-4" Variant="Variant.Filled" DropShadow="false" Color="Color.Primary" @onclick="AbrirFormularioInsercion">Agregar Nuevo Doctor</MudButton>
-                </MudItem>
-            </MudGrid>
+            <MudText Typo="Typo.subtitle1" Align="Align.Center">Ha ocurrido un error al procesar la consulta.</MudText>
         }
     </MudPaper>
 </MudContainer>

@@ -17,14 +17,14 @@
         {
             <MudProgressLinear Color="Color.Primary" Indeterminate="true" />
         }
-        else if (estados != null && estados .Any())
+        else if (estados != null)
         {
             <MudGrid Container="true" Justify="Justify.SpaceBetween" Class="ml-2" Spacing="3">
                 <MudItem xs="8">
                     <MudButton Class="mb-4" Variant="Variant.Filled" DropShadow="false" Color="Color.Primary" @onclick="AbrirFormularioInsercion">Agregar Nuevo Estado</MudButton>
                 </MudItem>
             </MudGrid>
-            <MudDataGrid T="EstadoGetDTO" MultiSelection="true" Items="@estados" Hover="true" Dense="true" Filterable="true" Sortable="true">
+            <MudDataGrid Items="@estados" Hover="true" Dense="true" Filterable="true">
                 <Columns>
                     <SelectColumn T="EstadoGetDTO" Hidden />
                     <PropertyColumn Property="x => x.IdEstado" Title="ID" />
@@ -41,6 +41,9 @@
                 <PagerContent>
                     <MudDataGridPager T="EstadoGetDTO" PageSizeOptions="[5,10,15]" />
                 </PagerContent>
+                <NoRecordsContent>
+                    No se encontro ningún resultado.
+                </NoRecordsContent>
             </MudDataGrid>
             <style>
                 .dialog-show {
@@ -50,12 +53,7 @@
         }
         else
         {
-            <MudGrid Container="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Spacing="2">
-                <MudItem>
-                    <MudText Typo="Typo.subtitle1" Align="Align.Center">No se encontro ningún resultado.</MudText>
-                    <MudButton Class="mb-4" Variant="Variant.Filled" DropShadow="false" Color="Color.Primary" @onclick="AbrirFormularioInsercion">Agregar Nuevo Estado</MudButton>
-                </MudItem>
-            </MudGrid>
+            <MudText Typo="Typo.subtitle1" Align="Align.Center">Ha ocurrido un error al procesar la consulta.</MudText>
         }
     </MudPaper>
 </MudContainer>

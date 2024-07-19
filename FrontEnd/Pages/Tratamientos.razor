@@ -1,4 +1,4 @@
-﻿@page "/tratamiento"
+﻿@page "/tratamientos"
 
 @using Sistema_de_Gestion_de_Hospitales.FrontEnd.Interfaces
 @using Sistema_de_Gestion_de_Hospitales.Shared
@@ -17,20 +17,20 @@
         {
             <MudProgressLinear Color="Color.Primary" Indeterminate="true" />
         }
-        else if (tratamientos != null && tratamientos.Any())
+        else if (tratamientos != null)
         {
             <MudGrid Container="true" Justify="Justify.SpaceBetween" Class="ml-2" Spacing="3">
                 <MudItem xs="8">
-                    <MudButton Class="mb-4" Variant="Variant.Filled" DropShadow="false" Color="Color.Primary" @onclick="AbrirFormularioInsercion">Agregar Nuevo Habitacion</MudButton>
+                    <MudButton Class="mb-4" Variant="Variant.Filled" DropShadow="false" Color="Color.Primary" @onclick="AbrirFormularioInsercion">Agregar Nueva Habitación</MudButton>
                 </MudItem>
             </MudGrid>
-            <MudDataGrid T="TratamientoGetDTO" MultiSelection="true" Items="@tratamientos" Hover="true" Dense="true" Filterable="true" Sortable="true">
+            <MudDataGrid Items="@tratamientos" Hover="true" Dense="true" Filterable="true">
                 <Columns>
-                    <SelectColumn T="TratamientoGetDTO" Hidden />
+                    <HierarchyColumn T="TratamientoGetDTO" />
                     <PropertyColumn Property="x => x.IdTratamiento" Title="ID" />
                     <PropertyColumn Property="x => x.NombreDoctor" Title="Doctor" />
                     <PropertyColumn Property="x => x.FechaInicio" Title="Fecha de Inicio" />
-                    <PropertyColumn Property="x => x.FechaFin" Title="Fecha de Terminación" />
+                    <PropertyColumn Property="x => x.FechaFin" Title="Fecha de Finalización" />
                     <TemplateColumn>
                         <CellTemplate>
                             <MudStack Row>
@@ -40,9 +40,28 @@
                         </CellTemplate>
                     </TemplateColumn>
                 </Columns>
+                <ChildRowContent>
+                    <MudCard>
+                        <MudCardHeader>
+                            <CardHeaderContent>
+                                <MudText Typo="Typo.h6">@context.Item.IdTratamiento</MudText>
+                            </CardHeaderContent>
+                        </MudCardHeader>
+                        <MudCardContent>
+                            <MudText>Doctor: @context.Item.NombreDoctor</MudText>
+                            <MudText>Descripción: @context.Item.Descripcion</MudText>
+                            <MudText>Diagnóstico: @context.Item.DescripcionDiagnostico</MudText>
+                            <MudText>Fecha de Inicio: @context.Item.FechaInicio</MudText>
+                            <MudText>Fecha de Finalización: @context.Item.FechaFin</MudText>
+                        </MudCardContent>
+                    </MudCard>
+                </ChildRowContent>
                 <PagerContent>
                     <MudDataGridPager T="TratamientoGetDTO" PageSizeOptions="[5,10,15]" />
                 </PagerContent>
+                <NoRecordsContent>
+                    No se encontro ningún resultado.
+                </NoRecordsContent>
             </MudDataGrid>
             <style>
                 .dialog-show {
@@ -52,12 +71,7 @@
         }
         else
         {
-            <MudGrid Container="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Spacing="2">
-                <MudItem>
-                    <MudText Typo="Typo.subtitle1" Align="Align.Center">No se encontro ningún resultado.</MudText>
-                        <MudButton Class="mb-4" Variant="Variant.Filled" DropShadow="false" Color="Color.Primary" @onclick="AbrirFormularioInsercion">Agregar Nuevo Habitacion</MudButton>
-                </MudItem>
-            </MudGrid>
+            <MudText Typo="Typo.subtitle1" Align="Align.Center">Ha ocurrido un error al procesar la consulta.</MudText>
         }
     </MudPaper>
 </MudContainer>
