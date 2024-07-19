@@ -15,11 +15,11 @@ namespace Sistema_de_Gestion_de_Hospitales.Shared.Paciente
         public string NombreCompleto { get; set; } = null!;
 
         [Required]
-        [Range(typeof(DateOnly), "1970-01-01", "2023-12-31", ErrorMessage = "Fecha de Nacimiento debe estar entre el {1} y el {2}.")]
+        [Range(typeof(DateOnly), "1970-01-01", "2024-12-31", ErrorMessage = "Fecha de Nacimiento debe estar entre el {1} y el {2}.")]
         public DateOnly FechaNacimiento { get; set; }
 
         [Required(ErrorMessage = "Género es requerido")]
-        [MaxLength(200, ErrorMessage = "Género solo puede ser un 200 carácter (M ó F)")]
+        [MaxLength(1, ErrorMessage = "Género solo puede ser un carácter (M ó F)")]
         public string Genero { get; set; } = null!;
 
         [Required(ErrorMessage = "Dirección es requerido")]

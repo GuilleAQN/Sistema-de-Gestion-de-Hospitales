@@ -8,7 +8,7 @@
         public int IdEnfermera { get; set; }
         public DateTime? Fecha { get; set; }
         public int IdCategoriaCita { get; set; }
-        public string Descripcion { get; set; } = null!;
+        public string Descripción { get; set; } = null!;
         public string NombrePaciente { get; set; } = null!;
         public string NombreDoctor { get; set; } = null!;
         public string NombreEnfermera { get; set; } = null!;
