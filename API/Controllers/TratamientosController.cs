@@ -23,7 +23,10 @@ namespace Sistema_de_Gestion_de_Hospitales.API.Controller
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TratamientoGetDTO>>> GetTratamientos()
         {
-            var tratamientoList = await context.Tratamientos.ToListAsync();
+            var tratamientoList = await context.Tratamientos
+                .Include(c => c.IdDoctorNavigation)
+                .Include(c => c.IdDiagnosticoNavigation)
+                .ToListAsync();
             var tratamientosDto = mapper.Map<IEnumerable<TratamientoGetDTO>>(tratamientoList);
             return Ok(tratamientosDto);
         }
