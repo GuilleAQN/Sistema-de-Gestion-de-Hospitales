@@ -23,5 +23,5 @@ public partial class Enfermera
 
     public virtual ICollection<Cita> Cita { get; set; } = new List<Cita>();
 
-    public virtual Departamento IdDepartamentoNavigation { get; set; } = null!;
+    public virtual Departamento? IdDepartamentoNavigation { get; set; } = null!;
 }

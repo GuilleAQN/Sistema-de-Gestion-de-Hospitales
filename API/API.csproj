@@ -40,10 +40,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Helper\" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <ProjectReference Include="..\Shared\Shared.csproj" />
 	</ItemGroup>
 

@@ -19,11 +19,11 @@ public partial class Cita
 
     public string Descripción { get; set; } = null!;
 
-    public virtual CategoriasCita IdCategoriaCitaNavigation { get; set; } = null!;
+    public virtual CategoriasCita? IdCategoriaCitaNavigation { get; set; } = null!;
 
-    public virtual Doctor IdDoctorNavigation { get; set; } = null!;
+    public virtual Doctor? IdDoctorNavigation { get; set; } = null!;
 
-    public virtual Enfermera IdEnfermeraNavigation { get; set; } = null!;
+    public virtual Enfermera? IdEnfermeraNavigation { get; set; } = null!;
 
-    public virtual Paciente IdPacienteNavigation { get; set; } = null!;
+    public virtual Paciente? IdPacienteNavigation { get; set; } = null!;
 }

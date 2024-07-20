@@ -13,7 +13,7 @@ public partial class Habitacion
 
     public string Tipo { get; set; } = null!;
 
-    public int IdEstado { get; set; }
+    public int? IdEstado { get; set; }
 
-    public virtual Estado IdEstadoNavigation { get; set; } = null!;
+    public virtual Estado? IdEstadoNavigation { get; set; } = null!;
 }

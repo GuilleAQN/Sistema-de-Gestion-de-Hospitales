@@ -7,7 +7,7 @@ public partial class Tratamiento
     [Key]
     public int IdTratamiento { get; set; }
 
-    public int IdDiagnostico { get; set; }
+    public int? IdDiagnostico { get; set; }
 
     public int? IdDoctor { get; set; }
 
@@ -17,7 +17,7 @@ public partial class Tratamiento
 
     public DateOnly FechaFin { get; set; }
 
-    public virtual Diagnostico IdDiagnosticoNavigation { get; set; } = null!;
+    public virtual Diagnostico? IdDiagnosticoNavigation { get; set; } = null!;
 
-    public virtual Doctor IdDoctorNavigation { get; set; } = null!;
+    public virtual Doctor? IdDoctorNavigation { get; set; } = null!;
 }

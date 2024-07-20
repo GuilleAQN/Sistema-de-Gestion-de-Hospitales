@@ -19,7 +19,7 @@ public partial class Doctor
 
     public string? CorreoElectronico { get; set; }
 
-    public int IdEspecialidad { get; set; }
+    public int? IdEspecialidad { get; set; }
 
     public int? IdDepartamento { get; set; }
 
@@ -27,9 +27,9 @@ public partial class Doctor
 
     public virtual ICollection<Diagnostico> Diagnosticos { get; set; } = new List<Diagnostico>();
 
-    public virtual Departamento IdDepartamentoNavigation { get; set; } = null!;
+    public virtual Departamento? IdDepartamentoNavigation { get; set; } = null!;
 
-    public virtual Especialidad IdEspecialidadNavigation { get; set; } = null!;
+    public virtual Especialidad? IdEspecialidadNavigation { get; set; } = null!;
 
     public virtual ICollection<Tratamiento> Tratamientos { get; set; } = new List<Tratamiento>();
 }
