@@ -15,9 +15,9 @@ public partial class Diagnostico
 
     public string Descripcion { get; set; } = null!;
 
-    public virtual Doctor? IdDoctorNavigation { get; set; } = null!;
+    public virtual Doctor IdDoctorNavigation { get; set; } = null!;
 
-    public virtual Paciente? IdPacienteNavigation { get; set; } = null!;
+    public virtual Paciente IdPacienteNavigation { get; set; } = null!;
 
     public virtual ICollection<Tratamiento> Tratamientos { get; set; } = new List<Tratamiento>();
 }

@@ -13,7 +13,7 @@ namespace Sistema_de_Gestion_de_Hospitales.API.Models.ModelConfiguration
 
             entity.HasOne(d => d.IdDoctorNavigation).WithMany(p => p.Diagnosticos)
                 .HasForeignKey(d => d.IdDoctor)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("FK__Diagnosti__IdDoc__403A8C7D");
 
             entity.HasOne(d => d.IdPacienteNavigation).WithMany(p => p.Diagnosticos)

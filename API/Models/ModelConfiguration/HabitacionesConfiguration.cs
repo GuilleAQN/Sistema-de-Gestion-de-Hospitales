@@ -11,7 +11,7 @@ namespace Sistema_de_Gestion_de_Hospitales.API.Models.ModelConfiguration
 
             entity.HasOne(d => d.IdEstadoNavigation).WithMany(p => p.Habitacion)
                 .HasForeignKey(d => d.IdEstado)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("FK__Estado__Habitacion__3C3456532CG");
 
             entity.Property(e => e.Numero).HasMaxLength(5);

@@ -19,21 +19,21 @@
             <MudTextField T="string" Label="Descripción" AutoGrow Lines="3" @bind-Value="Model.Descripcion" Required="true" />
             <MudDatePicker PickerVariant="PickerVariant.Dialog" @bind-Date="@fechaInicio" Label="Fecha de Inicio" Required="true" />
             <MudDatePicker PickerVariant="PickerVariant.Dialog" @bind-Date="@fechaFin" Label="Fecha de Finalización" Required="true" />
-            <MudSelect T="int" Label="Diagnóstico" @bind-Value="@Model.IdDiagnostico" HelperText="@diagnosticosText" ToStringFunc="@((int id) => diagnosticos.FirstOrDefault(d => d.IdDiagnostico == id)?.Descripcion)">
+            <MudSelect T="int?" Label="Diagnóstico" @bind-Value="@Model.IdDiagnostico" HelperText="@diagnosticosText" ToStringFunc="@((int? id) => diagnosticos.FirstOrDefault(d => d.IdDiagnostico == id)?.Descripcion ?? "Sin Diagnóstico")">
                 @if (diagnosticos != null)
 
                     @foreach (var diagnostico in diagnosticos)
                     {
-                        <MudSelectItem T="int" Value="diagnostico.IdDiagnostico">@diagnostico.Descripcion</MudSelectItem>
+                        <MudSelectItem T="int?" Value="diagnostico.IdDiagnostico">@diagnostico.Descripcion</MudSelectItem>
                     }
                 }
             </MudSelect>
-            <MudSelect T="int" Label="Doctor" @bind-Value="@Model.IdDoctor" HelperText="@doctoresText" ToStringFunc="@((int id) => doctores.FirstOrDefault(d => d.IdDoctor == id)?.NombreCompleto)">
+            <MudSelect T="int?" Label="Doctor" @bind-Value="@Model.IdDoctor" HelperText="@doctoresText" ToStringFunc="@((int? id) => doctores.FirstOrDefault(d => d.IdDoctor == id)?.NombreCompleto ?? "Sin Doctor")">
                 @if (doctores != null)
                 {
                     @foreach (var doctor in doctores)
                     {
-                        <MudSelectItem T="int" Value="doctor.IdDoctor">@doctor.NombreCompleto</MudSelectItem>
+                        <MudSelectItem T="int?" Value="doctor.IdDoctor">@doctor.NombreCompleto</MudSelectItem>
                     }
                 }
             </MudSelect>
@@ -68,6 +68,10 @@
     {
         fechaInicio = Model.FechaInicio.ToDateTime(TimeOnly.Parse("12:00 PM"));
         fechaFin = Model.FechaFin.ToDateTime(TimeOnly.Parse("12:00 PM"));
+
+        Model.IdDiagnostico = (Model.IdDiagnostico == null) ? 0 : Model.IdDiagnostico;
+        Model.IdDoctor = (Model.IdDoctor == null) ? 0 : Model.IdDoctor;
+
         diagnosticos = await CargarDiagnosticosAsync();
         doctores = await CargarDoctoresAsync();
         doctoresText = doctores.Any() ? string.Empty : "No se encontraron doctores.";

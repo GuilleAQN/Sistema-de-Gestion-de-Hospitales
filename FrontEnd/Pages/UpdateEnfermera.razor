@@ -21,7 +21,7 @@
             <MudTextField T="string" Label="Correo Electrónico" @bind-Value="Model.CorreoElectronico" Required="true" />
             <MudDatePicker PickerVariant="PickerVariant.Dialog" @bind-Date="@fechaTransitiva" Label="Fecha de Contratación" Required="true" />
             <MudTextField T="string" Label="Dirección" AutoGrow Lines="3" @bind-Value="Model.Direccion" Required="true" />
-            <MudSelect T="int" Label="Departamentos" HelperText="@departamentosText" @bind-Value="@Model.IdDepartamento">
+            <MudSelect T="int?" Label="Departamentos" HelperText="@departamentosText" @bind-Value="@Model.IdDepartamento" ToStringFunc="@((int? id) => departamentos.FirstOrDefault(d => d.IdDepartamento == id)?.Nombre ?? "Sin Departamento")">
                 @if (departamentos != null)
                 {
                     @foreach (var departamento in departamentos)
@@ -56,6 +56,9 @@
     protected override async Task OnInitializedAsync()
     {
         fechaTransitiva = Model.FechaContratacion.ToDateTime(TimeOnly.Parse("12:00 PM"));
+
+        Model.IdDepartamento = (Model.IdDepartamento == null) ? 0 : Model.IdDepartamento;
+
         departamentosText = departamentos.Any() ? string.Empty : "No se encontraron departamentos.";
         departamentos = await CargarDepartamentosAsync();
     }

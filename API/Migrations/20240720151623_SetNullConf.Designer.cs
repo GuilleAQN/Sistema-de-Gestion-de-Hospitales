@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Sistema_de_Gestion_de_Hospitales.API.Data;
 
@@ -11,9 +12,11 @@ using Sistema_de_Gestion_de_Hospitales.API.Data;
 namespace API.Migrations
 {
     [DbContext(typeof(SistemaHospitalDbContext))]
-    partial class SistemaHospitalDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240720151623_SetNullConf")]
+    partial class SetNullConf
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

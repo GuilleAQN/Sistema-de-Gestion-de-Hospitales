@@ -13,12 +13,12 @@ namespace Sistema_de_Gestion_de_Hospitales.API.Models.ModelConfiguration
 
             entity.HasOne(d => d.IdDiagnosticoNavigation).WithMany(p => p.Tratamientos)
                 .HasForeignKey(d => d.IdDiagnostico)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("FK__Tratamien__IdDia__4316F928");
 
             entity.HasOne(d => d.IdDoctorNavigation).WithMany(p => p.Tratamientos)
                 .HasForeignKey(d => d.IdDoctor)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("FK__Tratamien__IdDoc__440B1D61");
         }
     }

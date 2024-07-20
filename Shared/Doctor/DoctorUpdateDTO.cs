@@ -36,9 +36,9 @@ namespace Sistema_de_Gestion_de_Hospitales.Shared.Doctor
         public string? CorreoElectronico { get; set; }
 
         [Required(ErrorMessage = "Código de la Especialidad es requerido")]
-        public int IdEspecialidad { get; set; }
+        public int? IdEspecialidad { get; set; }
 
         [Required(ErrorMessage = "Código del Departamento es requerido")]
-        public int IdDepartamento { get; set; }
+        public int? IdDepartamento { get; set; }
     }
 }

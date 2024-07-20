@@ -17,7 +17,7 @@ namespace Sistema_de_Gestion_de_Hospitales.API.Models.ModelConfiguration
 
             entity.HasOne(d => d.IdDepartamentoNavigation).WithMany(p => p.Enfermeras)
                 .HasForeignKey(d => d.IdDepartamento)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("FK__Enfermera__IdDep__34C8D9D1");
         }
     }

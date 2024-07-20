@@ -18,39 +18,39 @@
     <DialogContent>
         <MudTextField T="string" Label="Nombre" @bind-Value="Model.Descripción" Required="true" />
         <MudDatePicker PickerVariant="PickerVariant.Dialog" Label="Fecha Agendada" @bind-Date="Model.Fecha"/>
-            <MudSelect T="int" Label="Doctor" @bind-Value="@Model.IdDoctor" HelperText="@doctoresText" ToStringFunc="@((int id) => doctores.FirstOrDefault(d => d.IdDoctor == id)?.NombreCompleto)">
+            <MudSelect T="int?" Label="Doctor" @bind-Value="@Model.IdDoctor" HelperText="@doctoresText" ToStringFunc="@((int? id) => doctores.FirstOrDefault(d => d.IdDoctor == id)?.NombreCompleto ?? "Sin Doctor")">
                 @if (doctores != null)
                 {
                     @foreach (var doctor in doctores)
                     {
-                        <MudSelectItem T="int" Value="doctor.IdDoctor">@doctor.NombreCompleto</MudSelectItem>
+                        <MudSelectItem T="int?" Value="doctor.IdDoctor">@doctor.NombreCompleto</MudSelectItem>
                     }
                 }
             </MudSelect>
-            <MudSelect Label="Enfermera" @bind-Value="@Model.IdEnfermera" HelperText="@enfermerasText" ToStringFunc="@((int id) => enfermeras.FirstOrDefault(d => d.IdEnfermera == id)?.NombreCompleto)">
+            <MudSelect T="int?" Label="Enfermera" @bind-Value="@Model.IdEnfermera" HelperText="@enfermerasText" ToStringFunc="@((int? id) => enfermeras.FirstOrDefault(d => d.IdEnfermera == id)?.NombreCompleto ?? "Sin Enfermera")">
                 @if (enfermeras != null)
                 {
                     @foreach (var enfermera in enfermeras)
                     {
-                        <MudSelectItem T="int" Value="enfermera.IdEnfermera">@enfermera.NombreCompleto</MudSelectItem>
+                        <MudSelectItem T="int?" Value="enfermera.IdEnfermera">@enfermera.NombreCompleto</MudSelectItem>
                     }
                 }
             </MudSelect>
-            <MudSelect Label="Pacientes" @bind-Value="@Model.IdPaciente" HelperText="@pacientesText" ToStringFunc="@((int id) => pacientes.FirstOrDefault(d => d.IdPaciente == id)?.NombreCompleto)">
+            <MudSelect T="int?" Label="Pacientes" @bind-Value="@Model.IdPaciente" HelperText="@pacientesText" ToStringFunc="@((int? id) => pacientes.FirstOrDefault(d => d.IdPaciente == id)?.NombreCompleto ?? "Sin Paciente")">
                 @if (pacientes != null)
                 {
                     @foreach (var paciente in pacientes)
                     {
-                        <MudSelectItem T="int" Value="paciente.IdPaciente">@paciente.NombreCompleto</MudSelectItem>
+                        <MudSelectItem T="int?" Value="paciente.IdPaciente">@paciente.NombreCompleto</MudSelectItem>
                     }
                 }
             </MudSelect>
-            <MudSelect Label="Categoria" @bind-Value="@Model.IdCategoriaCita" HelperText="@categoriasText" ToStringFunc="@((int id) => categoriaCitas.FirstOrDefault(d => d.IdCategoriaCita == id)?.Nombre)">
+            <MudSelect T="int?" Label="Categoria" @bind-Value="@Model.IdCategoriaCita" HelperText="@categoriasText" ToStringFunc="@((int? id) => categoriaCitas.FirstOrDefault(d => d.IdCategoriaCita == id)?.Nombre ?? "Sin Categoria")">
                 @if (categoriaCitas != null)
                 {
                     @foreach (var categoriaCita in categoriaCitas)
                     {
-                        <MudSelectItem T="int" Value="categoriaCita.IdCategoriaCita">@categoriaCita.Nombre</MudSelectItem>
+                        <MudSelectItem T="int?" Value="categoriaCita.IdCategoriaCita">@categoriaCita.Nombre</MudSelectItem>
                     }
                 }
             </MudSelect>
@@ -89,13 +89,18 @@
         enfermerasText = enfermeras.Any() ? string.Empty : "No se encontraron enfermeras.";
         categoriasText = categoriaCitas.Any() ? string.Empty : "No se encontraron categorias.";
         pacientesText = pacientes.Any() ? string.Empty : "No se encontraron pacientes.";
+
+        Model.IdDoctor = (Model.IdDoctor == null) ? 0 : Model.IdDoctor;
+        Model.IdEnfermera = (Model.IdEnfermera == null) ? 0 : Model.IdEnfermera;
+        Model.IdPaciente = (Model.IdPaciente == null) ? 0 : Model.IdPaciente;
+        Model.IdCategoriaCita = (Model.IdCategoriaCita == null) ? 0 : Model.IdCategoriaCita;
     }
     
 
     private async Task ActualizarCita()
     {
         var dto = new CitaUpdateDTO();
-        Model.CopyPropertiesTo(dto);
+        Model.CopyPropertiesTo(dto); 
 
         try
         {

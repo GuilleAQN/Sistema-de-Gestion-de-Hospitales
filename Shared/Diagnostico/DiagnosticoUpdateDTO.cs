@@ -8,10 +8,10 @@ namespace Sistema_de_Gestion_de_Hospitales.Shared.Diagnostico
         public int IdDiagnostico { get; set; }
 
         [Required(ErrorMessage = "Código del Paciente es requerido")]
-        public int IdPaciente { get; set; }
+        public int? IdPaciente { get; set; }
 
         [Required(ErrorMessage = "Código del Doctor es requerido")]
-        public int IdDoctor { get; set; }
+        public int? IdDoctor { get; set; }
 
         [Required]
         [Range(typeof(DateOnly), "1990-01-01", "2050-12-31", ErrorMessage = "{0} debe estar entre el {1} y el {2}.")]

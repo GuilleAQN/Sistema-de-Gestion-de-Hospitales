@@ -18,12 +18,12 @@
             <MudTextField T="string" Label="Número" Mask="@(new PatternMask("00000"))" @bind-Value="Model.Numero" Required="true" />
             <MudTextField T="int" Label="Piso" @bind-Value="Model.Piso" Required="true" InputType="InputType.Number" Min="1" Max="4" />
             <MudTextField T="string" Label="Tipo" @bind-Value="Model.Tipo" Required="true" />
-            <MudSelect T="int" Label="Estado" @bind-Value="@Model.IdEstado" HelperText="@estadosText" ToStringFunc="@((int id) => estados.FirstOrDefault(d => d.IdEstado == id)?.Nombre)">
+            <MudSelect T="int?" Label="Estado" @bind-Value="@Model.IdEstado" HelperText="@estadosText" ToStringFunc="@((int? id) => estados.FirstOrDefault(d => d.IdEstado == id)?.Nombre ?? "Sin Estado")">
                 @if (estados != null)
                 {
                     @foreach (var estado in estados)
                     {
-                        <MudSelectItem T="int" Value="estado.IdEstado">@estado.Nombre</MudSelectItem>
+                        <MudSelectItem T="int?" Value="estado.IdEstado">@estado.Nombre</MudSelectItem>
                     }
                 }
             </MudSelect>
@@ -52,6 +52,9 @@
     protected override async Task OnInitializedAsync()
     {
         estados = await CargarEstadosAsync();
+
+        Model.IdEstado = (Model.IdEstado == null) ? 0 : Model.IdEstado;
+
         estadosText = estados.Any() ? string.Empty : "No se encontraron estados.";
     }
 

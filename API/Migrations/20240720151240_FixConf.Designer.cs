@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Sistema_de_Gestion_de_Hospitales.API.Data;
 
@@ -11,9 +12,11 @@ using Sistema_de_Gestion_de_Hospitales.API.Data;
 namespace API.Migrations
 {
     [DbContext(typeof(SistemaHospitalDbContext))]
-    partial class SistemaHospitalDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240720151240_FixConf")]
+    partial class FixConf
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -661,7 +664,6 @@ namespace API.Migrations
                     b.HasOne("Sistema_de_Gestion_de_Hospitales.API.Models.Doctor", "IdDoctorNavigation")
                         .WithMany("Cita")
                         .HasForeignKey("IdDoctor")
-                        .OnDelete(DeleteBehavior.SetNull)
                         .HasConstraintName("FK__Citas__IdDoctor__3A81B327");
 
                     b.HasOne("Sistema_de_Gestion_de_Hospitales.API.Models.Enfermera", "IdEnfermeraNavigation")
@@ -688,7 +690,6 @@ namespace API.Migrations
                     b.HasOne("Sistema_de_Gestion_de_Hospitales.API.Models.Doctor", "IdDoctorNavigation")
                         .WithMany("Diagnosticos")
                         .HasForeignKey("IdDoctor")
-                        .OnDelete(DeleteBehavior.SetNull)
                         .HasConstraintName("FK__Diagnosti__IdDoc__403A8C7D");
 
                     b.HasOne("Sistema_de_Gestion_de_Hospitales.API.Models.Paciente", "IdPacienteNavigation")
@@ -748,7 +749,6 @@ namespace API.Migrations
                     b.HasOne("Sistema_de_Gestion_de_Hospitales.API.Models.Doctor", "IdDoctorNavigation")
                         .WithMany("Tratamientos")
                         .HasForeignKey("IdDoctor")
-                        .OnDelete(DeleteBehavior.SetNull)
                         .HasConstraintName("FK__Tratamien__IdDoc__440B1D61");
 
                     b.Navigation("IdDiagnosticoNavigation");

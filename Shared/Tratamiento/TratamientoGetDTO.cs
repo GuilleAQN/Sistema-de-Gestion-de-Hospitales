@@ -4,11 +4,11 @@
     {
         public int IdTratamiento { get; set; }
 
-        public int IdDiagnostico { get; set; }
+        public int? IdDiagnostico { get; set; }
 
         public string DescripcionDiagnostico { get; set; } = null!;
 
-        public int IdDoctor { get; set; }
+        public int? IdDoctor { get; set; }
 
         public string NombreDoctor { get; set; } = null!;
 

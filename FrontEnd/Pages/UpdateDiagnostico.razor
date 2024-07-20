@@ -16,21 +16,21 @@
         <DialogContent>
             <DataAnnotationsValidator />
             <ValidationSummary />
-            <MudSelect T="int" Label="Doctor" @bind-Value="@Model.IdDoctor" HelperText="@doctoresText" ToStringFunc="@((int id) => doctores.FirstOrDefault(d => d.IdDoctor == id)?.NombreCompleto)">
+            <MudSelect T="int?" Label="Doctor" @bind-Value="@Model.IdDoctor" HelperText="@doctoresText" ToStringFunc="@((int? id) => doctores.FirstOrDefault(d => d.IdDoctor == id)?.NombreCompleto ?? "Sin Doctor")">
                 @if (doctores != null)
                 {
                     @foreach (var doctor in doctores)
                     {
-                        <MudSelectItem T="int" Value="doctor.IdDoctor">@doctor.NombreCompleto</MudSelectItem>
+                        <MudSelectItem T="int?" Value="doctor.IdDoctor">@doctor.NombreCompleto</MudSelectItem>
                     }
                 }
             </MudSelect>
-            <MudSelect Label="Pacientes" @bind-Value="@Model.IdPaciente" HelperText="@pacientesText" ToStringFunc="@((int id) => pacientes.FirstOrDefault(d => d.IdPaciente == id)?.NombreCompleto)">
+            <MudSelect T="int?" Label="Pacientes" @bind-Value="@Model.IdPaciente" HelperText="@pacientesText" ToStringFunc="@((int? id) => pacientes.FirstOrDefault(d => d.IdPaciente == id)?.NombreCompleto ?? "Sin Paciente")">
                 @if (pacientes != null)
                 {
                     @foreach (var paciente in pacientes)
                     {
-                        <MudSelectItem T="int" Value="paciente.IdPaciente">@paciente.NombreCompleto</MudSelectItem>
+                        <MudSelectItem T="int?" Value="paciente.IdPaciente">@paciente.NombreCompleto</MudSelectItem>
                     }
                 }
             </MudSelect>
@@ -51,7 +51,8 @@
     [Parameter]
     public DiagnosticoGetDTO Model { get; set; }
 
-    [Parameter] public EventCallback OnClose { get; set; }
+    [Parameter]
+    public EventCallback OnClose { get; set; }
 
     private DateTime? fecha;
 
@@ -64,6 +65,10 @@
     protected override async Task OnInitializedAsync()
     {
         fecha = Model.Fecha.ToDateTime(TimeOnly.Parse("12:00 PM"));
+
+        Model.IdDoctor = (Model.IdDoctor == null) ? 0 : Model.IdDoctor;
+        Model.IdPaciente = (Model.IdPaciente == null) ? 0 : Model.IdPaciente;
+
         pacientes = await CargarPacientesAsync();
         doctores = await CargarDoctoresAsync();
         doctoresText = doctores.Any() ? string.Empty : "No se encontraron doctores.";
