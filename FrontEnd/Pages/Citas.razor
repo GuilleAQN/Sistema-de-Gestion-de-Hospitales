@@ -116,7 +116,7 @@
 
     private async Task EditCita(CitaGetDTO cita)
     {
-        var parameters = new DialogParameters { { "Model", cita} };
+        var parameters = new DialogParameters { { "Model", cita } };
         var options = new DialogOptions { CloseButton = true, MaxWidth = MaxWidth.Small, FullWidth = true, BackgroundClass = "dialog-show" };
         parameters.Add("OnClose", EventCallback.Factory.Create(this, OnDialogClose));
 
